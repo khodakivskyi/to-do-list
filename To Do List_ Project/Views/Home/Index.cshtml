@@ -1,0 +1,23 @@
+﻿@{
+	ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+	<h1 class="display-4">Додати завдання</h1>
+	<form>
+		<input type="text" name="Text" placeholder="Назва"/>
+		<input type="date" name="Due_Date" />
+		<input list="categories" id="category" name="category" placeholder="Введіть або оберіть категорію" />
+
+		<datalist id="categories">
+			<option value="Робота" />
+			<option value="Навчання" />
+			<option value="Особисте" />
+		</datalist>
+
+		<button action="Task_Add">Створити завдання</button>
+	</form>
+
+	
+
+</div>
