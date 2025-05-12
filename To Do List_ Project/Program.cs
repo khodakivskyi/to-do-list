@@ -1,4 +1,5 @@
 using Microsoft.Data.SqlClient;
+using To_Do_List__Project.Repositories;
 
 namespace To_Do_List__Project
 {
@@ -8,24 +9,24 @@ namespace To_Do_List__Project
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            string connectingString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ToDo;Integrated Security=True;Encrypt=True";
+            var connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ToDo;Integrated Security=True;Encrypt=True";
 
-            using (SqlConnection connection = new SqlConnection(connectingString))
-            {
-                try
-                {
-                    connection.Open();
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
-            }
-            
+            builder.Services.AddScoped<TaskRepository>(provider =>
+                new TaskRepository(connectionString));
+
+            builder.Services.AddScoped<CategoryRepository>(provider =>
+       new CategoryRepository(connectionString));
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var categoryRepository = scope.ServiceProvider.GetRequiredService<CategoryRepository>();
+                categoryRepository.AddDefaultCategories();
+            }
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

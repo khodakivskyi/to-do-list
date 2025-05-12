@@ -1,23 +1,92 @@
 ﻿@{
-	ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home Page";
+    var tasks = ViewBag.Tasks as List<To_Do_List__Project.Models.TaskModel>;
+    var categories = ViewBag.Categories as List<To_Do_List__Project.Models.Category>;
 }
 
 <div class="text-center">
-	<h1 class="display-4">Додати завдання</h1>
-	<form>
-		<input type="text" name="Text" placeholder="Назва"/>
-		<input type="date" name="Due_Date" />
-		<input list="categories" id="category" name="category" placeholder="Введіть або оберіть категорію" />
+    <form asp-action="Task_Add" method="post">
+        <input type="text" name="Text" placeholder="Введіть текст завдання" required />
+        <div>
+            <input type="date" name="Due_Date" />
+            <select name="Category_Id" required>
+                <option value="" disabled selected>Оберіть категорію</option>
+                @foreach (var category in ViewBag.Categories)
+                {
+                    <option value="@category.Category_Id">@category.Category_Name</option>
+                }
+            </select>
+        </div>
+        <button type="submit">Створити завдання</button>
+    </form>
 
-		<datalist id="categories">
-			<option value="Робота" />
-			<option value="Навчання" />
-			<option value="Особисте" />
-		</datalist>
+    <h2>Активні завдання</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Текст завдання</th>
+                <th>Категорія</th>
+                <th>Термін</th>
+                <th>Статус</th>
+                <th>Дата створення</th>
+                <th>Виконано</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (tasks != null && tasks.Any())
+            {
+                foreach (var task in tasks)
+                {
+                    var categoryName = categories?.FirstOrDefault(c => c.Category_Id == task.Category_Id)?.Category_Name ?? "Не визначено";
 
-		<button action="Task_Add">Створити завдання</button>
-	</form>
+                    <tr>
+                        <td>@task.Text</td>
+                        <td>@categoryName</td>
+                        <td>@task.Due_Date.ToString("yyyy-MM-dd")</td>
+                        <td>@(task.Is_Complited == true ? "Завершено" : "В процесі")</td>
+                        <td>@task.Created_At.ToString("yyyy-MM-dd")</td>
+                        <td><input type="checkbox" name="name" value="" action="Is_Compleated"/></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="5">Немає завдань для відображення</td></tr>
+            }
+        </tbody>
+    </table>
 
-	
+    <h2>Виконані завдання</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Текст завдання</th>
+                <th>Категорія</th>
+                <th>Термін</th>
+                <th>Статус</th>
+                <th>Дата створення</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (tasks != null && tasks.Any())
+            {
+                foreach (var task in tasks)
+                {
+                    var categoryName = categories?.FirstOrDefault(c => c.Category_Id == task.Category_Id)?.Category_Name ?? "Не визначено";
 
+                    <tr>
+                        <td>@task.Text</td>
+                        <td>@categoryName</td>
+                        <td>@task.Due_Date.ToString("yyyy-MM-dd")</td>
+                        <td>@(task.Is_Complited == true ? "Завершено" : "В процесі")</td>
+                        <td>@task.Created_At.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="5">Немає завдань для відображення</td></tr>
+            }
+        </tbody>
+    </table>
 </div>

@@ -19,10 +19,11 @@ html {
 
 body {
     margin-bottom: 60px;
+    background-color: lightgray;
 }
 
 form {
-    background-color: #b4e2fc;
+    background-color: whitesmoke;
     display: flex;
     flex-direction: column;
     border: 2px solid #021230;
@@ -33,10 +34,10 @@ form {
     width: 50%;
 }
 
-    form input {
+    form input, select {
         border-radius: 10px;
         border: 1px solid #4facfe;
-        width: 450px;
+        width: 532px;
         height: 45px;
         transition: transform 0.5s ease;
         padding: 12px;
@@ -59,7 +60,6 @@ form {
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0, 191, 255, 0.3);
         transition: all 0.3s ease;
     }
         form button:hover {
@@ -71,9 +71,30 @@ form {
             box-shadow: 0 3px 8px rgba(0, 191, 255, 0.4);
         }
 
-.text-center{
-    display:flex;
+.text-center {
+    display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction:column;
+    flex-direction: column;
+}
+form div{
+    display: flex; 
+    flex-direction:row;
+    padding: 0;
+    gap: 32px;
+}
+form div input, select{
+    width: 250px;
+    margin: 0;
+}
+table {
+    background-color: whitesmoke;
+    border-radius: 9px !important;
+}
+h1{
+    margin:20px 50px;
+}
+h2{
+    font-weight: normal;
+    margin-top: 50px;
 }
