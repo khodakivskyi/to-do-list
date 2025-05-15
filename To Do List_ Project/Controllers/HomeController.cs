@@ -21,11 +21,15 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        _categoryRepository.AddDefaultCategories();
         var categories = _categoryRepository.GetCategories();
         ViewBag.Categories = categories;
 
         var activeTasks = _taskRepository.GetActiveTasks();
-        ViewBag.Tasks = activeTasks;
+        ViewBag.activeTasks = activeTasks;
+
+        var completedTasks = _taskRepository.GetCompletedTasks();
+        ViewBag.completedTasks = completedTasks;
 
         return View();
     }
@@ -41,7 +45,6 @@ public class HomeController : Controller
     {
         if (ModelState.IsValid)
         {
-            _categoryRepository.AddDefaultCategories();
             _taskRepository.AddTask(task);
 
             var activeTasks = _taskRepository.GetActiveTasks();
@@ -53,7 +56,7 @@ public class HomeController : Controller
         return View();
     }
     [HttpPost]
-    public IActionResult Is_Compleated(int taskId)
+    public IActionResult Is_Completed(int taskId)
     {
         try
         {
@@ -61,19 +64,32 @@ public class HomeController : Controller
 
             if (task != null)
             {
-                task.Is_Complited = !task.Is_Complited; 
-
-   
+                task.Is_Completed = !task.Is_Completed;
+                task.Completed_At = DateTime.Now;
                 _taskRepository.UpdateTask(task);
 
                 return RedirectToAction("Index");
             }
 
-            return View();
+            return NotFound();
         }
         catch (Exception ex)
         {
-            // Логування помилки або повідомлення про помилку
+            Console.WriteLine(ex.ToString());
+            return View("Error");
+        }
+    }
+
+    [HttpPost]
+    public IActionResult CleanTasks()
+    {
+        try
+        {
+            _taskRepository.CleanTasks();
+            return RedirectToAction("Index");
+        }
+        catch (Exception ex)
+        {
             Console.WriteLine(ex.ToString());
             return View("Error");
         }

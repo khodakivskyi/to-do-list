@@ -18,11 +18,10 @@ html {
 }
 
 body {
-    margin-bottom: 60px;
     background-color: lightgray;
 }
 
-form {
+.default-form {
     background-color: whitesmoke;
     display: flex;
     flex-direction: column;
@@ -34,7 +33,7 @@ form {
     width: 50%;
 }
 
-    form input, select {
+    .default-form input, select {
         border-radius: 10px;
         border: 1px solid #4facfe;
         width: 532px;
@@ -43,33 +42,35 @@ form {
         padding: 12px;
     }
 
-    form * {
+    .default-form * {
         margin: 8px;
     }
 
-    form input:hover {
+    .default-form input:hover {
         background-color: #ececec
     }
 
-    form button {
-        background: linear-gradient(135deg, #4facfe, #021230); /* градієнт блакитний */
-        border: none;
-        border-radius: 12px;
-        color: white;
-        padding: 12px 24px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-        form button:hover {
-            transform: scale(1.05);
-        }
+button {
+    background: linear-gradient(135deg, #4facfe, #021230);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 532px;
+}
 
-        form button:active {
-            transform: scale(0.97);
-            box-shadow: 0 3px 8px rgba(0, 191, 255, 0.4);
-        }
+    button:hover {
+        transform: scale(1.05);
+    }
+
+    button:active {
+        transform: scale(0.97);
+        box-shadow: 0 3px 8px rgba(0, 191, 255, 0.4);
+    }
 
 .text-center {
     display: flex;
@@ -77,24 +78,41 @@ form {
     align-items: center;
     flex-direction: column;
 }
-form div{
-    display: flex; 
-    flex-direction:row;
+
+.default-form div {
+    display: flex;
+    flex-direction: row;
     padding: 0;
-    gap: 32px;
+    gap: 40px;
+    align-items: center;
+    justify-content: space-between;
+    width: 532px;
 }
-form div input, select{
-    width: 250px;
-    margin: 0;
-}
+
+    .default-form div input, .default-form div select {
+        width: 250px;
+        margin: 0;
+    }
+
 table {
     background-color: whitesmoke;
     border-radius: 9px !important;
 }
-h1{
-    margin:20px 50px;
+
+h1 {
+    margin: 20px 50px;
 }
-h2{
+
+h2 {
     font-weight: normal;
     margin-top: 50px;
+}
+
+table:nth-of-type(2) tbody tr.completed td {
+    text-decoration: line-through;
+}
+
+.down button {
+    margin: 50px 0 0 0;
+    width: 532px;
 }
