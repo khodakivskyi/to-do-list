@@ -17,7 +17,7 @@ This is a simple and functional **To-Do List web application** built using **ASP
 - ADO.NET
 - SQL Server Express LocalDB
 - HTML, CSS, JavaScript
-- Bootstrap (optional)
+- Bootstrap
 
 ## 📁 Project Structure
 
