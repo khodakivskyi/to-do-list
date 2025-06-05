@@ -3,11 +3,11 @@ using To_Do_List__Project.Models;
 
 namespace To_Do_List__Project.Repositories
 {
-    public class CategoryRepository
+    public class SQLCategoryRepository
     {
         private readonly string _connectionString;
 
-        public CategoryRepository(string connectionString)
+        public SQLCategoryRepository(string connectionString)
         {
             _connectionString = connectionString;
         }
@@ -18,13 +18,11 @@ namespace To_Do_List__Project.Repositories
             {
                 connection.Open();
 
-                string query = "SELECT COUNT(*) FROM Categories";
-                var command = new SqlCommand(query, connection);
-                int count = (int)command.ExecuteScalar();  
+                var categories = GetCategories();
 
-                if (count == 0) 
+                if (categories == null || categories.Count == 0)
                 {
-                    var categories = new List<Category>
+                    categories = new List<Category>
                     {
                         new() { Category_Name = "Робота" },
                         new() { Category_Name = "Особисте" },

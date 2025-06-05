@@ -116,3 +116,13 @@ table:nth-of-type(2) tbody tr.completed td {
     margin: 50px 0 0 0;
     width: 532px;
 }
+
+.storage-form {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+
+.storage {
+    width: 100px;
+}

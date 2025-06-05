@@ -5,11 +5,27 @@
 	var categories = ViewBag.Categories as List<To_Do_List__Project.Models.Category>;
 }
 
+<form asp-action="Storage_Choose" method="post" class="storage-form">
+	<label for="storage">Активне сховище:</label>
+	<select class="storage" name="storage" onchange="this.form.submit()">
+		@if ((ViewBag.SelectedStorage as string) == "SQL")
+		{
+			<option value="SQL" selected>SQL</option>
+			<option value="XML">XML</option>
+		}
+		else
+		{
+			<option value="SQL">SQL</option>
+			<option value="XML" selected>XML</option>
+		}
+	</select>
+</form>
+
 <div class="text-center">
 	<form asp-action="Task_Add" method="post" class="default-form">
 		<input type="text" name="Text" placeholder="Введіть текст завдання" required />
 		<div>
-			<input type="date" name="Due_Date"/>
+			<input type="date" name="Due_Date" />
 			<select name="Category_Id">
 				<option value="" disabled selected>Оберіть категорію</option>
 				@foreach (var category in ViewBag.Categories)
@@ -42,14 +58,14 @@
 					<tr>
 						<td>@task.Text</td>
 						<td>@categoryName</td>
-						<td>@(task.Due_Date.HasValue ? task.Due_Date.Value.ToString("yyyy-MM-dd") : "Не вказано")</td>
+						<td>@(task.Due_Date.HasValue? task.Due_Date.Value.ToString("yyyy-MM-dd") : "Не вказано")</td>
 						<td>@task.Created_At.ToString("yyyy-MM-dd")</td>
 						<td>
 							<form asp-action="Is_Completed" method="post">
 								<input type="hidden" name="taskId" value="@task.Id" />
 								<input type="checkbox"
 									   onchange="this.form.submit()"
-								@(task.Is_Completed == true ? "checked" : "") />
+									   @(task.Is_Completed == true ? "checked" : "") />
 							</form>
 						</td>
 					</tr>
@@ -83,9 +99,9 @@
 					<tr class="completed">
 						<td>@task.Text</td>
 						<td>@categoryName</td>
-						<td>@(task.Due_Date.HasValue ? task.Due_Date.Value.ToString("yyyy-MM-dd") : "Не вказано")</td>
+						<td>@(task.Due_Date.HasValue? task.Due_Date.Value.ToString("yyyy-MM-dd") : "Не вказано")</td>
 						<td>@task.Created_At.ToString("yyyy-MM-dd")</td>
-						<td>@(task.Completed_At.HasValue ? task.Completed_At.Value.ToString("yyyy-MM-dd") : "")</td>
+						<td>@(task.Completed_At.HasValue? task.Completed_At.Value.ToString("yyyy-MM-dd") : "")</td>
 					</tr>
 				}
 			}

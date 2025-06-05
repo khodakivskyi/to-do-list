@@ -5,11 +5,11 @@ using To_Do_List__Project.Models;
 
 namespace To_Do_List__Project.Repositories
 {
-    public class TaskRepository
+    public class SQLTaskRepository
     {
         private readonly string _connectionString;
 
-        public TaskRepository(string connectionString)
+        public SQLTaskRepository(string connectionString)
         {
             _connectionString = connectionString;
         }
@@ -43,7 +43,7 @@ namespace To_Do_List__Project.Repositories
             }
         }
 
-        public List<TaskModel> GetAllTasks()
+        /*public List<TaskModel> GetAllTasks()
         {
             try
             {
@@ -78,81 +78,7 @@ namespace To_Do_List__Project.Repositories
                 Console.WriteLine(ex.ToString());
                 return new List<TaskModel>();
             }
-        }
-
-        public List<TaskModel> GetActiveTasks()
-        {
-            try
-            {
-                var tasks = new List<TaskModel>();
-
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    string query = "SELECT * FROM Tasks WHERE Is_Completed = 0";
-                    var command = new SqlCommand(query, connection);
-                    connection.Open();
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        tasks.Add(new TaskModel
-                        {
-                            Id = (int)reader["Id"],
-                            Text = reader["Text"].ToString()!,
-                            Due_Date = reader["Due_Date"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["Due_Date"],
-                            Category_Id = reader["Category_Id"] == DBNull.Value ? (int?)null : Convert.ToInt32(reader["Category_Id"]),
-                            Is_Completed = reader["Is_Completed"] == DBNull.Value ? (bool?)null : (bool)reader["Is_Completed"],
-                            Created_At = (DateTime)reader["Created_At"]
-                        });
-                    }
-                }
-
-                return tasks;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                return new List<TaskModel>();
-            }
-        }
-
-        public List<TaskModel> GetCompletedTasks()
-        {
-            try
-            {
-                var tasks = new List<TaskModel>();
-
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    string query = "SELECT * FROM Tasks WHERE Is_Completed = @Is_Completed";
-                    var command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@Is_Completed", true);
-                    connection.Open();
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        tasks.Add(new TaskModel
-                        {
-                            Id = (int)reader["Id"],
-                            Text = reader["Text"].ToString()!,
-                            Due_Date = reader["Due_Date"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["Due_Date"],
-                            Category_Id = reader["Category_Id"] == DBNull.Value ? (int?)null : Convert.ToInt32(reader["Category_Id"]),
-                            Is_Completed = reader["Is_Completed"] != DBNull.Value && (bool)reader["Is_Completed"],
-                            Created_At = (DateTime)reader["Created_At"],
-                            Completed_At = reader["Completed_At"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["Completed_At"]
-                        });
-                    }
-
-                    return tasks;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                return new List<TaskModel>();
-            }
-        }
+        }*/
 
         public TaskModel? GetTaskById(int taskId)
         {
@@ -188,6 +114,67 @@ namespace To_Do_List__Project.Repositories
                 return null;
             }
         }
+        public List<TaskModel> GetActiveTasks()
+        {
+            try
+            {
+                return GetTasksByCompletionStatus(false);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return new List<TaskModel>();
+            }
+        }
+
+        public List<TaskModel> GetCompletedTasks()
+        {
+            try
+            {
+                return GetTasksByCompletionStatus(true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return new List<TaskModel>();
+            }
+        }
+        private List<TaskModel> GetTasksByCompletionStatus(bool isCompleted)
+        {
+            var tasks = new List<TaskModel>();
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM Tasks WHERE Is_Completed = @Is_Completed";
+                var command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@Is_Completed", isCompleted);
+                connection.Open();
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var task = new TaskModel
+                    {
+                        Id = (int)reader["Id"],
+                        Text = reader["Text"].ToString()!,
+                        Due_Date = reader["Due_Date"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["Due_Date"],
+                        Category_Id = reader["Category_Id"] == DBNull.Value ? (int?)null : Convert.ToInt32(reader["Category_Id"]),
+                        Is_Completed = isCompleted,
+                        Created_At = (DateTime)reader["Created_At"]
+                    };
+
+                    if (isCompleted)
+                    {
+                        task.Completed_At = reader["Completed_At"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["Completed_At"];
+                    }
+
+                    tasks.Add(task);
+                }
+            }
+
+            return tasks;
+        }
+
         public void UpdateTask(TaskModel task)
         {
             try
@@ -214,7 +201,7 @@ namespace To_Do_List__Project.Repositories
             }
         }
 
-        public void CleanTasks()
+        public void ClearTasks()
         {
             try
             {

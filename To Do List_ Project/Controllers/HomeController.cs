@@ -1,35 +1,62 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client.Extensions.Msal;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using To_Do_List__Project.Models;
 using To_Do_List__Project.Repositories;
+using To_Do_List__Project.XMLRepositories;
 
 namespace To_Do_List__Project.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly TaskRepository _taskRepository;
-    private readonly CategoryRepository _categoryRepository;
 
-    public HomeController(ILogger<HomeController> logger, TaskRepository taskRepository, CategoryRepository categoryRepository)
+    private readonly SQLTaskRepository _sqlTaskRepository;
+    private readonly SQLCategoryRepository _sqlCategoryRepository;
+
+    private readonly XMLTaskRepository _xmlTaskRepository;
+    private readonly XMLCategoryRepository _xmlCategoryRepository;
+
+    public HomeController(ILogger<HomeController> logger, SQLTaskRepository taskRepository, SQLCategoryRepository categoryRepository, 
+        XMLTaskRepository xmlTaskRepository, XMLCategoryRepository xmlCategoryRepository)
     {
         _logger = logger;
-        _taskRepository = taskRepository;
-        _categoryRepository = categoryRepository;
+        _sqlTaskRepository = taskRepository;
+        _sqlCategoryRepository = categoryRepository;
+        _xmlTaskRepository = xmlTaskRepository;
+        _xmlCategoryRepository = xmlCategoryRepository;
     }
 
     public IActionResult Index()
     {
-        _categoryRepository.AddDefaultCategories();
-        var categories = _categoryRepository.GetCategories();
-        ViewBag.Categories = categories;
+        var storage = GetCurrentStorage();
+        ViewBag.SelectedStorage = storage;
 
-        var activeTasks = _taskRepository.GetActiveTasks();
-        ViewBag.activeTasks = activeTasks;
+        if(storage == "SQL")
+        {
+            _sqlCategoryRepository.AddDefaultCategories();
+            var categories = _sqlCategoryRepository.GetCategories();
+            ViewBag.Categories = categories;
 
-        var completedTasks = _taskRepository.GetCompletedTasks();
-        ViewBag.completedTasks = completedTasks;
+            var activeTasks = _sqlTaskRepository.GetActiveTasks();
+            var completedTasks = _sqlTaskRepository.GetCompletedTasks();
+
+            ViewBag.activeTasks = activeTasks;
+            ViewBag.completedTasks = completedTasks;
+        }
+        else
+        {
+            _xmlCategoryRepository.AddDefaultCategories();
+            var categories = _xmlCategoryRepository.GetCategories();
+            ViewBag.Categories = categories;
+
+            var activeTasks = _xmlTaskRepository.GetActiveTasks();
+            var completedTasks = _xmlTaskRepository.GetCompletedTasks();
+
+            ViewBag.activeTasks = activeTasks;
+            ViewBag.completedTasks = completedTasks;
+        }   
 
         return View();
     }
@@ -45,10 +72,13 @@ public class HomeController : Controller
     {
         if (ModelState.IsValid)
         {
-            _taskRepository.AddTask(task);
+            var storage = GetCurrentStorage();
 
-            var activeTasks = _taskRepository.GetActiveTasks();
-            ViewBag.Tasks = activeTasks;
+            if (storage == "SQL")
+                _sqlTaskRepository.AddTask(task);
+
+            else
+                _xmlTaskRepository.AddTask(task);
 
             return RedirectToAction("Index");
         }
@@ -60,18 +90,24 @@ public class HomeController : Controller
     {
         try
         {
-            var task = _taskRepository.GetTaskById(taskId); 
+            var storage = GetCurrentStorage();
 
-            if (task != null)
-            {
-                task.Is_Completed = !task.Is_Completed;
-                task.Completed_At = DateTime.Now;
-                _taskRepository.UpdateTask(task);
+            TaskModel? task = storage == "SQL"
+        ? _sqlTaskRepository.GetTaskById(taskId)
+        : _xmlTaskRepository.GetTaskById(taskId);
 
-                return RedirectToAction("Index");
-            }
+            if (task == null)
+                return NotFound();
 
-            return NotFound();
+            task.Is_Completed = !task.Is_Completed;
+            task.Completed_At = DateTime.Now;
+
+            if (storage == "SQL")
+                _sqlTaskRepository.UpdateTask(task);
+            else
+                _xmlTaskRepository.UpdateTask(task);
+
+            return RedirectToAction("Index");
         }
         catch (Exception ex)
         {
@@ -85,7 +121,17 @@ public class HomeController : Controller
     {
         try
         {
-            _taskRepository.CleanTasks();
+            var storage = GetCurrentStorage();
+
+            if (storage == "SQL")
+            {
+                _sqlTaskRepository.ClearTasks();
+            }
+            else
+            {
+                _xmlTaskRepository.ClearTasks();
+            }
+
             return RedirectToAction("Index");
         }
         catch (Exception ex)
@@ -93,5 +139,19 @@ public class HomeController : Controller
             Console.WriteLine(ex.ToString());
             return View("Error");
         }
+    }
+    [HttpPost]
+    public IActionResult Storage_Choose(string storage)
+    {
+        Console.WriteLine($"[Storage_Choose] Selected: {storage}");
+
+        if (storage=="SQL" || storage=="XML")
+            HttpContext.Session.SetString("StorageType", storage);
+
+        return RedirectToAction("Index");
+    }
+    private string GetCurrentStorage()
+    {
+        return HttpContext.Session.GetString("StorageType") ?? "SQL";
     }
 }
