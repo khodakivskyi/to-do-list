@@ -1,6 +1,15 @@
-using Microsoft.Data.SqlClient;
+using GraphQL;
+using GraphQL.Types;
+using GraphQL.Server;
+using GraphQL.MicrosoftDI;
+using GraphQL.SystemTextJson;
+
 using To_Do_List__Project.Database.SQLRepositories;
 using To_Do_List__Project.Database.XMLRepositories;
+using To_Do_List__Project.GraphQL.Queries;
+using To_Do_List__Project.GraphQL.Types;
+using To_Do_List__Project.GraphQL;
+
 
 namespace To_Do_List__Project
 {
@@ -10,38 +19,41 @@ namespace To_Do_List__Project
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // SQL
             var connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ToDo;Integrated Security=True;Encrypt=True";
+            builder.Services.AddScoped<SQLTaskRepository>(_ => new SQLTaskRepository(connectionString));
+            builder.Services.AddScoped<SQLCategoryRepository>(_ => new SQLCategoryRepository(connectionString));
 
-            builder.Services.AddScoped<SQLTaskRepository>(provider =>
-                new SQLTaskRepository(connectionString));
-            builder.Services.AddScoped<SQLCategoryRepository>(provider =>
-       new SQLCategoryRepository(connectionString));
-
-            builder.Services.AddScoped<XMLTaskRepository>(provider =>
+            // XML
+            builder.Services.AddScoped<XMLTaskRepository>(_ =>
             {
-                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "XMLdb");
-
-                if (!Directory.Exists(folderPath))
-                    Directory.CreateDirectory(folderPath);
-
-                var filePath = Path.Combine(folderPath, "tasks.xml");
-
-                return new XMLTaskRepository(filePath);
-            });
-            builder.Services.AddScoped<XMLCategoryRepository>(provider =>
-            {
-                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "XMLdb");
-
-                if (!Directory.Exists(folderPath))
-                    Directory.CreateDirectory(folderPath);
-
-                var filePath = Path.Combine(folderPath, "categories.xml");
-
-                return new XMLCategoryRepository(filePath);
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "XMLdb");
+                Directory.CreateDirectory(path);
+                return new XMLTaskRepository(Path.Combine(path, "tasks.xml"));
             });
 
+            builder.Services.AddScoped<XMLCategoryRepository>(_ =>
+            {
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "XMLdb");
+                Directory.CreateDirectory(path);
+                return new XMLCategoryRepository(Path.Combine(path, "categories.xml"));
+            });
 
-            // Add services to the container.
+            // GraphQL Types
+            builder.Services.AddSingleton<TaskType>();
+            builder.Services.AddSingleton<CategoryType>();
+            builder.Services.AddSingleton<TaskQuery>();
+            builder.Services.AddSingleton<CategoryQuery>();
+            builder.Services.AddSingleton<RootQuery>();
+            builder.Services.AddSingleton<ISchema, AppSchema>();
+
+            builder.Services.AddGraphQL(builder =>
+            {
+                builder.AddSystemTextJson();  // десеріалізація/серіалізація JSON
+                builder.AddErrorInfoProvider(opt => opt.ExposeExceptionDetails = true);
+                builder.AddGraphTypes(typeof(RootQuery).Assembly);
+            });
+
             builder.Services.AddControllersWithViews().AddSessionStateTempDataProvider();
             builder.Services.AddSession();
 
@@ -49,27 +61,21 @@ namespace To_Do_List__Project
 
             using (var scope = app.Services.CreateScope())
             {
-                var sqlCategoryRepo = scope.ServiceProvider.GetRequiredService<SQLCategoryRepository>();
-                sqlCategoryRepo.AddDefaultCategories();
-
-                var xmlCategoryRepo = scope.ServiceProvider.GetRequiredService<XMLCategoryRepository>();
-                xmlCategoryRepo.AddDefaultCategories();
+                scope.ServiceProvider.GetRequiredService<SQLCategoryRepository>().AddDefaultCategories();
+                scope.ServiceProvider.GetRequiredService<XMLCategoryRepository>().AddDefaultCategories();
             }
 
-            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
-            {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-            app.UseSession();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthorization();
+
+            app.UseGraphQL<ISchema>("/graphql");
+            app.UseGraphQLGraphiQL("/ui/graphql");
 
             app.MapControllerRoute(
                 name: "default",
