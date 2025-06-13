@@ -1,11 +1,12 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using To_Do_List__Project.DatabaseServices.Interfaces;
 using To_Do_List__Project.Models;
 
-namespace To_Do_List__Project.Repositories
+namespace To_Do_List__Project.Database.SQLRepositories
 {
-    public class SQLTaskRepository
+    public class SQLTaskRepository : ITaskService
     {
         private readonly string _connectionString;
 
@@ -26,8 +27,8 @@ namespace To_Do_List__Project.Repositories
                     using (var command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Text", task.Text);
-                        command.Parameters.AddWithValue("@Due_Date", task.Due_Date.HasValue ? (object)task.Due_Date.Value : DBNull.Value);
-                        command.Parameters.AddWithValue("@Category_Id", task.Category_Id.HasValue ? (object)task.Category_Id.Value : DBNull.Value);
+                        command.Parameters.AddWithValue("@Due_Date", task.Due_Date.HasValue ? task.Due_Date.Value : DBNull.Value);
+                        command.Parameters.AddWithValue("@Category_Id", task.Category_Id.HasValue ? task.Category_Id.Value : DBNull.Value);
                         command.Parameters.AddWithValue("@Is_Completed", task.Is_Completed);
                         command.Parameters.AddWithValue("@Created_At", task.Created_At);
                         command.Parameters.AddWithValue("@Completed_At", (object?)task.Completed_At ?? DBNull.Value);
@@ -43,7 +44,7 @@ namespace To_Do_List__Project.Repositories
             }
         }
 
-        /*public List<TaskModel> GetAllTasks()
+        public List<TaskModel> GetAllTasks()
         {
             try
             {
@@ -78,7 +79,7 @@ namespace To_Do_List__Project.Repositories
                 Console.WriteLine(ex.ToString());
                 return new List<TaskModel>();
             }
-        }*/
+        }
 
         public TaskModel? GetTaskById(int taskId)
         {
@@ -98,8 +99,8 @@ namespace To_Do_List__Project.Repositories
                         {
                             Id = (int)reader["Id"],
                             Text = reader["Text"].ToString()!,
-                            Due_Date = reader["Due_Date"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["Due_Date"],
-                            Category_Id = reader["Category_Id"] == DBNull.Value ? (int?)null : Convert.ToInt32(reader["Category_Id"]),
+                            Due_Date = reader["Due_Date"] == DBNull.Value ? null : (DateTime)reader["Due_Date"],
+                            Category_Id = reader["Category_Id"] == DBNull.Value ? null : Convert.ToInt32(reader["Category_Id"]),
                             Is_Completed = (bool)(reader["Is_Completed"] ?? false),
                             Created_At = (DateTime)reader["Created_At"],
                             Completed_At = reader["Completed_At"] as DateTime?
@@ -157,15 +158,15 @@ namespace To_Do_List__Project.Repositories
                     {
                         Id = (int)reader["Id"],
                         Text = reader["Text"].ToString()!,
-                        Due_Date = reader["Due_Date"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["Due_Date"],
-                        Category_Id = reader["Category_Id"] == DBNull.Value ? (int?)null : Convert.ToInt32(reader["Category_Id"]),
+                        Due_Date = reader["Due_Date"] == DBNull.Value ? null : (DateTime)reader["Due_Date"],
+                        Category_Id = reader["Category_Id"] == DBNull.Value ? null : Convert.ToInt32(reader["Category_Id"]),
                         Is_Completed = isCompleted,
                         Created_At = (DateTime)reader["Created_At"]
                     };
 
                     if (isCompleted)
                     {
-                        task.Completed_At = reader["Completed_At"] == DBNull.Value ? (DateTime?)null : (DateTime)reader["Completed_At"];
+                        task.Completed_At = reader["Completed_At"] == DBNull.Value ? null : (DateTime)reader["Completed_At"];
                     }
 
                     tasks.Add(task);

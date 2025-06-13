@@ -1,10 +1,11 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Xml.Serialization;
+using To_Do_List__Project.DatabaseServices.Interfaces;
 using To_Do_List__Project.Models;
 
-namespace To_Do_List__Project.XMLRepositories
+namespace To_Do_List__Project.Database.XMLRepositories
 {
-    public class XMLTaskRepository
+    public class XMLTaskRepository : ITaskService
     {
         private readonly string _filePath;
 
@@ -19,7 +20,7 @@ namespace To_Do_List__Project.XMLRepositories
         }
         public void AddTask(TaskModel task)
         {
-            var tasks = GetTasks();
+            var tasks = GetAllTasks();
 
             task.Id = tasks.Any() ? tasks.Max(t => t.Id) + 1 : 1;
 
@@ -28,7 +29,7 @@ namespace To_Do_List__Project.XMLRepositories
             SaveTasks(tasks);
         }
 
-        public List<TaskModel> GetTasks()
+        public List<TaskModel> GetAllTasks()
         {
             try
             {
@@ -46,25 +47,25 @@ namespace To_Do_List__Project.XMLRepositories
         }
         public List<TaskModel> GetActiveTasks()
         {
-            var tasks = GetTasks();
+            var tasks = GetAllTasks();
             var activeTasks = tasks.Where(t => t.Is_Completed == false).ToList();
             return activeTasks;
         }
         public List<TaskModel> GetCompletedTasks()
         {
-            var tasks = GetTasks();
+            var tasks = GetAllTasks();
             var activeTasks = tasks.Where(t => t.Is_Completed == true).ToList();
             return activeTasks;
         }
         public TaskModel? GetTaskById(int taskId)
         {
-            var tasks = GetTasks();
+            var tasks = GetAllTasks();
             var task = tasks.FirstOrDefault(t => t.Id == taskId);
             return task;
         }
         public void UpdateTask(TaskModel task)
         {
-            var tasks = GetTasks();
+            var tasks = GetAllTasks();
 
             var index = tasks.FindIndex(t => t.Id == task.Id);
             if (index != -1)

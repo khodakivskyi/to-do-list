@@ -1,8 +1,13 @@
-﻿namespace To_Do_List__Project.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace To_Do_List__Project.Models
 {
     public class TaskModel
     {
         public int Id { set; get; }
+
+        [Required(ErrorMessage = "Назва завдання обов'язкова")]
+        [StringLength(100, ErrorMessage = "Назва не може перевищувати 100 символів")]
         public required string Text { set; get; }
         public DateTime? Due_Date { get; set; }
         public int? Category_Id { set; get; }

@@ -1,9 +1,10 @@
 ﻿using Microsoft.Data.SqlClient;
+using To_Do_List__Project.DatabaseServices.Interfaces;
 using To_Do_List__Project.Models;
 
-namespace To_Do_List__Project.Repositories
+namespace To_Do_List__Project.Database.SQLRepositories
 {
-    public class SQLCategoryRepository
+    public class SQLCategoryRepository : ICategoryService
     {
         private readonly string _connectionString;
 

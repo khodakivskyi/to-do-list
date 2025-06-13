@@ -1,6 +1,6 @@
 using Microsoft.Data.SqlClient;
-using To_Do_List__Project.Repositories;
-using To_Do_List__Project.XMLRepositories;
+using To_Do_List__Project.Database.SQLRepositories;
+using To_Do_List__Project.Database.XMLRepositories;
 
 namespace To_Do_List__Project
 {
@@ -49,8 +49,11 @@ namespace To_Do_List__Project
 
             using (var scope = app.Services.CreateScope())
             {
-                var categoryRepository = scope.ServiceProvider.GetRequiredService<SQLCategoryRepository>();
-                categoryRepository.AddDefaultCategories();
+                var sqlCategoryRepo = scope.ServiceProvider.GetRequiredService<SQLCategoryRepository>();
+                sqlCategoryRepo.AddDefaultCategories();
+
+                var xmlCategoryRepo = scope.ServiceProvider.GetRequiredService<XMLCategoryRepository>();
+                xmlCategoryRepo.AddDefaultCategories();
             }
 
             // Configure the HTTP request pipeline.

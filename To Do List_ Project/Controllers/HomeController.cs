@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client.Extensions.Msal;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using To_Do_List__Project.Database.SQLRepositories;
+using To_Do_List__Project.Database.XMLRepositories;
 using To_Do_List__Project.Models;
-using To_Do_List__Project.Repositories;
-using To_Do_List__Project.XMLRepositories;
 
 namespace To_Do_List__Project.Controllers;
 
@@ -35,7 +35,6 @@ public class HomeController : Controller
 
         if(storage == "SQL")
         {
-            _sqlCategoryRepository.AddDefaultCategories();
             var categories = _sqlCategoryRepository.GetCategories();
             ViewBag.Categories = categories;
 
@@ -47,7 +46,6 @@ public class HomeController : Controller
         }
         else
         {
-            _xmlCategoryRepository.AddDefaultCategories();
             var categories = _xmlCategoryRepository.GetCategories();
             ViewBag.Categories = categories;
 

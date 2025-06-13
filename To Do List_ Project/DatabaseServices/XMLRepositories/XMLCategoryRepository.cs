@@ -1,9 +1,10 @@
 ﻿using System.Xml.Serialization;
+using To_Do_List__Project.DatabaseServices.Interfaces;
 using To_Do_List__Project.Models;
 
-namespace To_Do_List__Project.XMLRepositories
+namespace To_Do_List__Project.Database.XMLRepositories
 {
-    public class XMLCategoryRepository
+    public class XMLCategoryRepository : ICategoryService
     {
         private readonly string _filePath;
 
