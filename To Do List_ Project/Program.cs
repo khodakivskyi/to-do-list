@@ -1,14 +1,14 @@
 using GraphQL;
-using GraphQL.Types;
-using GraphQL.Server;
 using GraphQL.MicrosoftDI;
+using GraphQL.Server;
 using GraphQL.SystemTextJson;
-
+using GraphQL.Types;
 using To_Do_List__Project.Database.SQLRepositories;
 using To_Do_List__Project.Database.XMLRepositories;
+using To_Do_List__Project.GraphQL;
+using To_Do_List__Project.GraphQL.Mutations;
 using To_Do_List__Project.GraphQL.Queries;
 using To_Do_List__Project.GraphQL.Types;
-using To_Do_List__Project.GraphQL;
 
 
 namespace To_Do_List__Project
@@ -42,16 +42,21 @@ namespace To_Do_List__Project
             // GraphQL Types
             builder.Services.AddSingleton<TaskType>();
             builder.Services.AddSingleton<CategoryType>();
+
             builder.Services.AddSingleton<TaskQuery>();
             builder.Services.AddSingleton<CategoryQuery>();
             builder.Services.AddSingleton<RootQuery>();
+
+            builder.Services.AddSingleton<TaskMutation>();
+            builder.Services.AddSingleton<RootMutation>();
             builder.Services.AddSingleton<ISchema, AppSchema>();
 
             builder.Services.AddGraphQL(builder =>
             {
-                builder.AddSystemTextJson();  // десеріалізація/серіалізація JSON
+                builder.AddSystemTextJson();
                 builder.AddErrorInfoProvider(opt => opt.ExposeExceptionDetails = true);
                 builder.AddGraphTypes(typeof(RootQuery).Assembly);
+                builder.AddGraphTypes(typeof(RootMutation).Assembly);
             });
 
             builder.Services.AddControllersWithViews().AddSessionStateTempDataProvider();

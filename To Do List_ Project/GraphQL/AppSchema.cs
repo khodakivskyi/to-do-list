@@ -1,4 +1,5 @@
 ﻿using GraphQL.Types;
+using To_Do_List__Project.GraphQL.Mutations;
 using To_Do_List__Project.GraphQL.Queries;
 
 namespace To_Do_List__Project.GraphQL
@@ -8,7 +9,7 @@ namespace To_Do_List__Project.GraphQL
         public AppSchema(IServiceProvider provider) : base(provider)
         {
             Query = provider.GetRequiredService<RootQuery>();
-            //
+            Mutation = provider.GetRequiredService<RootMutation>();
         }
     }
 }
