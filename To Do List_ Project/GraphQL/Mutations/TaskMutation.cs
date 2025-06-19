@@ -85,6 +85,9 @@ public class TaskMutation : ObjectGraphType
                     return false;
                 }
 
+                taskToUpdate.Is_Completed = true;
+                taskToUpdate.Completed_At = DateTime.Now;
+
                 taskService.UpdateTask(taskToUpdate);
 
                 return true;
