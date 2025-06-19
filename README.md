@@ -15,7 +15,8 @@ This is a simple and functional **To-Do List web application** built using **ASP
 - ASP.NET MVC
 - C#
 - ADO.NET
-- SQL Server Express LocalDB
+- GraphQL API
+- SQL Server Express LocalDB, XMLdb
 - HTML, CSS, JavaScript
 - Bootstrap
 
