@@ -1,0 +1,8 @@
+table {
+    background-color: whitesmoke;
+    border-radius: 9px !important;
+}
+
+table:nth-of-type(2) tbody tr.completed td {
+    text-decoration: line-through;
+}

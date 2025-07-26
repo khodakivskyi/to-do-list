@@ -5,8 +5,8 @@
         payload: task,
     });
 
-    export const deleteTask = (id: number) => ({
-        type: "DELETE_TASK" as const,
+    export const deleteTasks = (id: number) => ({
+        type: "DELETE_TASKS" as const,
         payload: id,
     });
 
