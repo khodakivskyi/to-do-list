@@ -15,7 +15,7 @@ namespace To_Do_List__Project.Database.SQLRepositories
             _connectionString = connectionString;
         }
 
-        public void AddTask(TaskModel task)
+        public TaskModel? AddTask(TaskModel task)
         {
             try
             {
@@ -36,11 +36,14 @@ namespace To_Do_List__Project.Database.SQLRepositories
                         connection.Open();
                         command.ExecuteNonQuery();
                     }
+                    return task;
                 }
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                return null;
             }
         }
 
@@ -176,7 +179,7 @@ namespace To_Do_List__Project.Database.SQLRepositories
             return tasks;
         }
 
-        public void UpdateTask(TaskModel task)
+        public bool UpdateTask(TaskModel task)
         {
             try
             {
@@ -195,14 +198,16 @@ namespace To_Do_List__Project.Database.SQLRepositories
                         command.ExecuteNonQuery();
                     }
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                return false;
             }
         }
 
-        public void ClearTasks()
+        public bool ClearTasks()
         {
             try
             {
@@ -213,10 +218,12 @@ namespace To_Do_List__Project.Database.SQLRepositories
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                return false;
             }
         }
     }

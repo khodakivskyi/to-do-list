@@ -38,9 +38,8 @@ public class TaskMutation : ObjectGraphType
                     Created_At = DateTime.Now
                 };
 
-                taskService.AddTask(taskToAdd);
+                var createdTask = taskService.AddTask(taskToAdd);
 
-                var createdTask = taskService.GetTaskById(taskToAdd.Id);
                 return createdTask;
             });
 
@@ -58,9 +57,9 @@ public class TaskMutation : ObjectGraphType
                     _ => services!.GetRequiredService<SQLTaskRepository>()
                 };
 
-                taskService.ClearTasks();
+                bool res = taskService.ClearTasks();
 
-                return true;
+                return res;
             });
 
         Field<BooleanGraphType>("updateTask")
@@ -88,9 +87,9 @@ public class TaskMutation : ObjectGraphType
                 taskToUpdate.Is_Completed = true;
                 taskToUpdate.Completed_At = DateTime.Now;
 
-                taskService.UpdateTask(taskToUpdate);
+                bool res = taskService.UpdateTask(taskToUpdate);
 
-                return true;
+                return res;
             });
     }
 }

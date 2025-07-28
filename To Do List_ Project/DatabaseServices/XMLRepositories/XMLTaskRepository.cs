@@ -18,15 +18,24 @@ namespace To_Do_List__Project.Database.XMLRepositories
                 SaveTasks(new List<TaskModel>());
             }
         }
-        public void AddTask(TaskModel task)
+        public TaskModel? AddTask(TaskModel task)
         {
-            var tasks = GetAllTasks();
+            try
+            {
+                var tasks = GetAllTasks();
 
-            task.Id = tasks.Any() ? tasks.Max(t => t.Id) + 1 : 1;
+                task.Id = tasks.Any() ? tasks.Max(t => t.Id) + 1 : 1;
 
-            tasks.Add(task);
+                tasks.Add(task);
 
-            SaveTasks(tasks);
+                SaveTasks(tasks);
+                return task;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
         }
 
         public List<TaskModel> GetAllTasks()
@@ -63,15 +72,23 @@ namespace To_Do_List__Project.Database.XMLRepositories
             var task = tasks.FirstOrDefault(t => t.Id == taskId);
             return task;
         }
-        public void UpdateTask(TaskModel task)
+        public bool UpdateTask(TaskModel task)
         {
-            var tasks = GetAllTasks();
-
-            var index = tasks.FindIndex(t => t.Id == task.Id);
-            if (index != -1)
+            try
             {
-                tasks[index] = task;
-                SaveTasks(tasks);
+                var tasks = GetAllTasks();
+
+                var index = tasks.FindIndex(t => t.Id == task.Id);
+                if (index != -1)
+                {
+                    tasks[index] = task;
+                    SaveTasks(tasks);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
         private void SaveTasks(List<TaskModel> tasks)
@@ -80,9 +97,16 @@ namespace To_Do_List__Project.Database.XMLRepositories
             using var stream = new FileStream(_filePath, FileMode.Create);
             serializer.Serialize(stream, tasks);
         }
-        public void ClearTasks()
+        public bool ClearTasks()
         {
-            SaveTasks(new List<TaskModel>());
+            try
+            {
+                SaveTasks(new List<TaskModel>());
+                return true;
+            }
+            catch {
+                return false;
+            }
         }
     }
 }
