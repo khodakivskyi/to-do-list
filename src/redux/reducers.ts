@@ -4,7 +4,7 @@ const initialState: Task[] = [];
 
 type Action =
     | { type: "ADD_TASK"; payload: Task }
-    | { type: "DELETE_TASKS"; payload: number }
+    | { type: "DELETE_TASKS"; }
     | { type: "MARK_AS_COMPLETED"; payload: number };
 
 export function reducer(state = initialState, action: Action): Task[] {
@@ -13,7 +13,7 @@ export function reducer(state = initialState, action: Action): Task[] {
             return [...state, action.payload];
 
         case "DELETE_TASKS":
-            return state.filter(task => task.id !== action.payload);
+            return [];
 
         case "MARK_AS_COMPLETED":
             return state.map(task =>

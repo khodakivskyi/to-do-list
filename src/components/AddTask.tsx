@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addTask } from "../redux/actions";
 import type { Task } from "../types";
-import './AddTask.css';
+import '../css/AddTask.css';
 
 const categories = [
     { id: 1, name: "Робота" },

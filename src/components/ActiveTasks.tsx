@@ -1,8 +1,7 @@
-import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { Task } from "../types";
 import { markAsCompleted } from "../redux/actions";
-import './TaskList.css';
+import '../css/TaskList.css';
 
 const categories = [
     { id: 1, name: "Робота" },
@@ -17,7 +16,7 @@ export const ActiveTasks = () => {
     );
 
     const getCategoryName = (id: number) => {
-        return categories.find(cat => cat.id === id)?.name ?? "Не визначено";
+        return categories.find(cat => cat.id === id)?.name ?? "Не вказано";
     };
 
     return (
@@ -38,7 +37,7 @@ export const ActiveTasks = () => {
                     activeTasks.map(task => (
                         <tr key={task.id}>
                             <td>{task.text}</td>
-                            <td>{getCategoryName(task.categoryId)}</td>
+                            <td>{task.categoryId !== undefined ? getCategoryName(task.categoryId) : "Не вказано"}</td>
                             <td>{task.dueDate || "Не вказано"}</td>
                             <td>{task.createdAt.slice(0, 10)}</td>
                             <td>
@@ -51,7 +50,7 @@ export const ActiveTasks = () => {
                     ))
                 ) : (
                     <tr>
-                        <td colSpan={5}>Немає завдань для відображення</td>
+                    <td colSpan={5}>Немає завдань для відображення</td>
                     </tr>
                 )}
                 </tbody>

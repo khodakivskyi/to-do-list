@@ -1,7 +1,6 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import type { Task } from "../types";
-import './TaskList.css';
+import '../css/TaskList.css';
 
 const categories = [
     { id: 1, name: "Робота" },
@@ -36,7 +35,7 @@ export const CompletedTasks = () => {
                     completedTasks.map(task => (
                         <tr className="completed" key={task.id}>
                             <td>{task.text}</td>
-                            <td>{getCategoryName(task.categoryId)}</td>
+                            <td>{task.categoryId !== undefined ? getCategoryName(task.categoryId) : "Не вказано"}</td>
                             <td>{task.dueDate || "Не вказано"}</td>
                             <td>{task.createdAt.slice(0, 10)}</td>
                             <td>

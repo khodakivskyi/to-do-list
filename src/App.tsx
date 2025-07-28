@@ -1,6 +1,7 @@
 import {AddTask} from "./components/AddTask";
 import {ActiveTasks} from "./components/ActiveTasks.tsx";
 import {CompletedTasks} from "./components/CompletedTasks.tsx";
+import {ClearAllTasks} from "./components/ClearAllTasks.tsx";
 
 import './App.css'
 
@@ -11,6 +12,7 @@ function App() {
             <AddTask/>
             <ActiveTasks/>
             <CompletedTasks/>
+            <ClearAllTasks/>
         </div>
     );
     }
