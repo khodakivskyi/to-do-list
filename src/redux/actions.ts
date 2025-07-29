@@ -1,8 +1,8 @@
     import type { Task } from "../types";
 
-    export const changeStorage = (task: Task) => ({
+    export const changeStorage = (storage: "SQL" | "XML") => ({
         type: "CHANGE_STORAGE" as const,
-        payload: task,
+        payload: storage,
     });
 
     export const addTask = (task: Task) => ({
