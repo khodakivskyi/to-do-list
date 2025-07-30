@@ -14,11 +14,11 @@ export const AddTask = () => {
     const dispatch = useDispatch();
     const [text, setText] = useState("");
     const [date, setDate] = useState("");
-    const [categoryId, setCategoryId] = useState<number | "">("");
+    const [categoryId, setCategoryId] = useState<number | undefined>(undefined);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!text.trim() || !date || categoryId === "") return;
+        if (!text.trim()) return;
 
         const newTask: Task = {
             id: Date.now(),
@@ -32,7 +32,7 @@ export const AddTask = () => {
         dispatch(addTask(newTask));
         setText("");
         setDate("");
-        setCategoryId("");
+        setCategoryId(undefined);
     };
 
     return (
@@ -55,8 +55,8 @@ export const AddTask = () => {
                 <select
                     name="Category_Id"
                     value={categoryId}
-                    onChange={(e) => setCategoryId(Number(e.target.value))}
-                >
+                    onChange={(e) =>
+                        setCategoryId(e.target.value === "" ? undefined : Number(e.target.value))}>
                     <option value="" disabled>
                         Оберіть категорію
                     </option>

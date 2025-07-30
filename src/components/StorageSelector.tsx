@@ -1,6 +1,6 @@
 import {useDispatch} from "react-redux";
 import { changeStorage } from "../redux/actions";
-import '../css/ClearAllTasks.css';
+import '../css/StorageSelector.css';
 
 export const StorageSelector = () => {
     const dispatch = useDispatch();

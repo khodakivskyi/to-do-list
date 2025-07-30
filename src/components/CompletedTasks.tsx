@@ -20,7 +20,7 @@ export const CompletedTasks = () => {
     return (
         <div>
             <h2>Виконані завдання</h2>
-            <table className="table">
+            <table className="table completed">
                 <thead>
                 <tr>
                     <th>Текст завдання</th>
