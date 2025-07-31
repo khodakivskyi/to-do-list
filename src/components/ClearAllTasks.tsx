@@ -1,5 +1,5 @@
 import {useDispatch} from "react-redux";
-import { deleteTasks } from "../redux/actions";
+import { deleteTasks } from "../redux/actions/rootActions";
 import '../css/ClearAllTasks.css';
 
 export const ClearAllTasks = () => {

@@ -1,19 +1,16 @@
 import { useSelector, useDispatch } from "react-redux";
-import type { Task } from "../types";
-import { markAsCompleted } from "../redux/actions";
+import type { RootState } from "../redux/reducers/rootReducers.ts";
+import { markAsCompleted } from "../redux/actions/rootActions";
 import '../css/TaskList.css';
-
-const categories = [
-    { id: 1, name: "Робота" },
-    { id: 2, name: "Навчання" },
-    { id: 3, name: "Особисте" },
-];
 
 export const ActiveTasks = () => {
     const dispatch = useDispatch();
-    const activeTasks = useSelector((state: Task[]) =>
-        state.filter(task => !task.isCompleted)
+
+    const activeTasks = useSelector((state: RootState) =>
+        state.tasks.filter(task => !task.isCompleted)
     );
+
+    const categories = useSelector((state: RootState) => state.categories);
 
     const getCategoryName = (id: number) => {
         return categories.find(cat => cat.id === id)?.name ?? "Не вказано";
@@ -50,7 +47,7 @@ export const ActiveTasks = () => {
                     ))
                 ) : (
                     <tr>
-                    <td colSpan={5}>Немає завдань для відображення</td>
+                        <td colSpan={5}>Немає завдань для відображення</td>
                     </tr>
                 )}
                 </tbody>

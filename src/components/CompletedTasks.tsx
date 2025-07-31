@@ -1,17 +1,14 @@
 import { useSelector } from "react-redux";
-import type { Task } from "../types";
+import type { RootState } from "../redux/reducers/rootReducers.ts";
 import '../css/TaskList.css';
 
-const categories = [
-    { id: 1, name: "Робота" },
-    { id: 2, name: "Навчання" },
-    { id: 3, name: "Особисте" },
-];
-
 export const CompletedTasks = () => {
-    const completedTasks = useSelector((state: Task[]) =>
-        state.filter(task => task.isCompleted)
+
+    const completedTasks = useSelector((state: RootState) =>
+        state.tasks.filter(task => task.isCompleted)
     );
+
+    const categories = useSelector((state: RootState) => state.categories);
 
     const getCategoryName = (id: number) => {
         return categories.find(cat => cat.id === id)?.name ?? "Не вказано";

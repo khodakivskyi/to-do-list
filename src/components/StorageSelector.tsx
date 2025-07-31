@@ -1,12 +1,12 @@
 import {useDispatch} from "react-redux";
-import { changeStorage } from "../redux/actions";
+import { changeStorage } from "../redux/actions/rootActions";
 import '../css/StorageSelector.css';
 
 export const StorageSelector = () => {
     const dispatch = useDispatch();
 
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedStorage = event.target.value as "SQL" | "XML";
+        const selectedStorage = event.target.value as "sql" | "xml";
         dispatch(changeStorage(selectedStorage))
     };
 
@@ -14,8 +14,8 @@ export const StorageSelector = () => {
         <div className={"storageSelector"}>
             <label htmlFor="storage">Активне сховище:</label>
             <select className={"storage"} onChange={handleChange} defaultValue={"SQL"}>
-                <option value="SQL">SQL</option>
-                <option value="XML">XML</option>
+                <option value="sql">SQL</option>
+                <option value="xml">XML</option>
             </select>
         </div>
     );

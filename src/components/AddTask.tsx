@@ -1,16 +1,12 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addTask } from "../redux/actions";
-import type { Task } from "../types";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../redux/reducers/rootReducers.ts";
+import { addTask } from "../redux/actions/rootActions";
+import type { Task } from "../types/rootTypes.ts";
 import '../css/AddTask.css';
 
-const categories = [
-    { id: 1, name: "Робота" },
-    { id: 2, name: "Навчання" },
-    { id: 3, name: "Особисте" }
-];
-
 export const AddTask = () => {
+    const categories = useSelector((state: RootState) => state.categories);
     const dispatch = useDispatch();
     const [text, setText] = useState("");
     const [date, setDate] = useState("");
@@ -56,7 +52,8 @@ export const AddTask = () => {
                     name="Category_Id"
                     value={categoryId}
                     onChange={(e) =>
-                        setCategoryId(e.target.value === "" ? undefined : Number(e.target.value))}>
+                        setCategoryId(e.target.value === "" ? undefined : Number(e.target.value))
+                    }>
                     <option value="" disabled>
                         Оберіть категорію
                     </option>
