@@ -13,6 +13,8 @@ export function tasksReducer(state = initialState, action: RootAction): Task[] {
             return state.map(task =>
                 task.id === action.payload ? { ...task, isCompleted: true, completedAt: new Date().toISOString() } : task
             );
+        case "LOAD_TASKS":
+            return action.payload;
         default:
             return state;
     }

@@ -1,0 +1,1 @@
+export type Storage = "sql" | "xml";

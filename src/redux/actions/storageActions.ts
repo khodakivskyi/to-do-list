@@ -1,6 +1,6 @@
-import type { StorageType } from "../reducers/storageReducer.ts";
+import type { Storage } from "../../types/rootTypes";
 
-export const changeStorage = (storage: StorageType) => ({
+export const changeStorage = (storage: Storage) => ({
     type: "CHANGE_STORAGE" as const,
     payload: storage,
 });

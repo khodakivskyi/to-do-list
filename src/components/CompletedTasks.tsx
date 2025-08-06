@@ -3,7 +3,6 @@ import type { RootState } from "../redux/reducers/rootReducers.ts";
 import '../css/TaskList.css';
 
 export const CompletedTasks = () => {
-
     const completedTasks = useSelector((state: RootState) =>
         state.tasks.filter(task => task.isCompleted)
     );

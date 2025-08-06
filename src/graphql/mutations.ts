@@ -13,11 +13,11 @@ export const ADD_TASK = `
     ) {
       id
       text
-      due_Date
-      category_Id
-      is_Completed
-      created_At
-      completed_At
+      dueDate
+      categoryId
+      isCompleted
+      createdAt
+      completedAt
     }
   }
 `;

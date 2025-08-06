@@ -1,4 +1,4 @@
-import type { Task } from "../../types/rootTypes";
+import type { Task, Storage } from "../../types/rootTypes";
 
 export const addTask = (task: Task) => ({
     type: "ADD_TASK" as const,
@@ -45,6 +45,21 @@ export const markAsCompletedFailed = (error: unknown) => ({
     payload: error,
 });
 
+export const loadTasksRequest = (status: string, source: Storage) => ({
+    type: "LOAD_TASKS_REQUEST" as const,
+    payload: { status, source },
+});
+
+export const loadTasks = (tasks: Task[]) => ({
+    type: "LOAD_TASKS" as const,
+    payload: tasks,
+});
+
+export const loadTasksFailed = (error: unknown) => ({
+    type: "LOAD_TASKS_FAILED" as const,
+    payload: error,
+});
+
 export type TasksAction =
     | ReturnType<typeof addTask>
     | ReturnType<typeof deleteTasks>
@@ -54,4 +69,7 @@ export type TasksAction =
     | ReturnType<typeof markAsCompletedRequest>
     | ReturnType<typeof addTaskFailed>
     | ReturnType<typeof deleteTasksFailed>
-    | ReturnType<typeof markAsCompletedFailed>;
+    | ReturnType<typeof markAsCompletedFailed>
+    | ReturnType<typeof loadTasksRequest>
+    | ReturnType<typeof loadTasks>
+    | ReturnType<typeof loadTasksFailed>;

@@ -1,4 +1,4 @@
-import type { Category } from "../../types/rootTypes";
+import type { Category, Storage } from "../../types/rootTypes";
 
 export const setCategories = (categories: Category[]) => ({
     type: "SET_CATEGORIES" as const,
@@ -6,8 +6,9 @@ export const setCategories = (categories: Category[]) => ({
 });
 
 
-export const loadCategoriesRequest = () => ({
+export const loadCategoriesRequest = (source: Storage) => ({
     type: "LOAD_CATEGORIES_REQUEST" as const,
+    payload: source,
 });
 
 export const loadCategoriesFailed = (error: unknown) => ({

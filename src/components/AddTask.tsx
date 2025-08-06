@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/reducers/rootReducers.ts";
-import { addTask } from "../redux/actions/rootActions";
-import type { Task } from "../types/rootTypes.ts";
+import {addTaskRequest, loadCategoriesRequest} from "../redux/actions/rootActions";
 import '../css/AddTask.css';
 
 export const AddTask = () => {
+    const source = useSelector((state: RootState) => state.storage);
     const categories = useSelector((state: RootState) => state.categories);
     const dispatch = useDispatch();
     const [text, setText] = useState("");
@@ -16,20 +16,15 @@ export const AddTask = () => {
         e.preventDefault();
         if (!text.trim()) return;
 
-        const newTask: Task = {
-            id: Date.now(),
-            text,
-            categoryId,
-            dueDate: date,
-            createdAt: new Date().toISOString(),
-            isCompleted: false
-        };
-
-        dispatch(addTask(newTask));
+        dispatch(addTaskRequest(text, date, categoryId));
         setText("");
         setDate("");
         setCategoryId(undefined);
     };
+
+    useEffect(() => {
+        dispatch(loadCategoriesRequest(source));
+    }, [dispatch, source]);
 
     return (
         <form onSubmit={handleSubmit} className="addTaskForm">

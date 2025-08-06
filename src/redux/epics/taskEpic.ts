@@ -1,14 +1,22 @@
 import type { Epic } from "redux-observable";
 import { ofType } from "redux-observable";
 import { map, switchMap, catchError } from "rxjs/operators";
-import { of } from "rxjs";
+import { of, from } from "rxjs";
 
-import { query$ } from "../../graphql/queryRx";
-import { addTask, deleteTasks, markAsCompleted } from "../actions/rootActions";
+import {addTask, deleteTasks, markAsCompleted, loadTasks, loadTasksFailed} from "../actions/rootActions";
 import type { RootAction } from "../actions/rootActions";
 import type { RootState } from "../reducers/rootReducers";
 import type { Task } from "../../types/rootTypes";
 import { ADD_TASK, UPDATE_TASK, CLEAR_TASKS } from "../../graphql/mutations";
+import { GET_TASKS } from "../../graphql/queries";
+import { graphQLClient } from "../../graphql/client";
+
+interface AddTaskVariables {
+    text: string;
+    source: string;
+    dueDate?: string | null;
+    categoryId?: number | null;
+}
 
 export const addTaskEpic: Epic<RootAction, RootAction, RootState> = (action$, state$) =>
     action$.pipe(
@@ -17,9 +25,13 @@ export const addTaskEpic: Epic<RootAction, RootAction, RootState> = (action$, st
             const { text, dueDate, categoryId } = action.payload;
             const source = state$.value.storage;
 
-            const variables = { text, dueDate, categoryId, source };
-
-            return query$<{ addTask: Task }>(ADD_TASK, variables).pipe(
+            const variables: AddTaskVariables = {
+                text,
+                source,
+                dueDate: dueDate || null,
+                categoryId: categoryId || null,
+            };
+            return from(graphQLClient.request<{ addTask: Task }>(ADD_TASK, variables)).pipe(
                 map(response => addTask(response.addTask)),
                 catchError(error => {
                     console.error("Error adding task:", error);
@@ -35,8 +47,10 @@ export const deleteTasksEpic: Epic<RootAction, RootAction, RootState> = (action$
         switchMap(() => {
             const source = state$.value.storage;
 
-            return query$<{ clearTasks: boolean }>(CLEAR_TASKS, { source }).pipe(
-                map(response => (response.clearTasks ? deleteTasks() : { type: "NO_OP" } as RootAction)),
+            return from(graphQLClient.request<{ clearTasks: boolean }>(CLEAR_TASKS, { source })).pipe(
+                map(response =>
+                    response.clearTasks ? deleteTasks() : { type: "NO_OP" } as RootAction
+                ),
                 catchError(error => {
                     console.error("Error clearing tasks:", error);
                     return of({ type: "DELETE_TASKS_FAILED", payload: error } as RootAction);
@@ -52,12 +66,32 @@ export const markAsCompletedEpic: Epic<RootAction, RootAction, RootState> = (act
             const id = action.payload;
             const source = state$.value.storage;
 
-            return query$<{ updateTask: boolean }>(UPDATE_TASK, { id, source }).pipe(
-                map(response => (response.updateTask ? markAsCompleted(id) : { type: "NO_OP" } as RootAction)),
+            return from(graphQLClient.request<{ updateTask: boolean }>(UPDATE_TASK, { id, source })).pipe(
+                map(response =>
+                    response.updateTask ? markAsCompleted(id) : { type: "NO_OP" } as RootAction
+                ),
                 catchError(error => {
                     console.error("Error updating task:", error);
                     return of({ type: "MARK_AS_COMPLETED_FAILED", payload: error } as RootAction);
                 })
+            );
+        })
+    );
+
+export const loadTasksEpic: Epic<RootAction, RootAction, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType("LOAD_TASKS_REQUEST"),
+        switchMap(action => {
+            const { source, status } = action.payload ?? {};
+            const finalSource = source ?? state$.value.storage;
+            return from(
+                graphQLClient.request<{ tasks: Task[] }>(GET_TASKS, {
+                    status,
+                    source: finalSource,
+                })
+            ).pipe(
+                map(response => loadTasks(response.tasks)),
+                catchError(error => of(loadTasksFailed(error)))
             );
         })
     );
