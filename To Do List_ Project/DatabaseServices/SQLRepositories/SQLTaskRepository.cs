@@ -122,6 +122,8 @@ namespace To_Do_List__Project.Database.SQLRepositories
         {
             try
             {
+                var result = GetTasksByCompletionStatus(false);
+                Console.WriteLine($"[Repository] Active tasks count: {result.Count}");
                 return GetTasksByCompletionStatus(false);
             }
             catch (Exception ex)

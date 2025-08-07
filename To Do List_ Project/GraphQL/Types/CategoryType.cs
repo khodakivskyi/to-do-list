@@ -7,9 +7,13 @@ namespace To_Do_List__Project.GraphQL.Types
     {
         public CategoryType()
         {
-            Field(x => x.Category_Id);
-            Field(x => x.Category_Name);
+            Name = "Category";
+
+            Field<IntGraphType>("id")
+                .Resolve(ctx => ctx.Source.Category_Id);
+
+            Field<StringGraphType>("categoryName")
+                .Resolve(ctx => ctx.Source.Category_Name);
         }
     }
-
 }

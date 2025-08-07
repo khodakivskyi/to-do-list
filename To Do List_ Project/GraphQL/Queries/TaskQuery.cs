@@ -15,7 +15,7 @@ namespace To_Do_List__Project.GraphQL.Queries
                 .Argument<StringGraphType>("source", "sql або xml")
                 .Resolve(context =>
                 {
-                    var status = context.GetArgument<string>("status");
+                    var status = context.GetArgument<string>("status")?.ToLower();
                     var source = context.GetArgument<string>("source")?.ToLower();
 
                     var services = context.RequestServices;

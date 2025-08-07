@@ -62,7 +62,23 @@ namespace To_Do_List__Project
             builder.Services.AddControllersWithViews().AddSessionStateTempDataProvider();
             builder.Services.AddSession();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    policy => policy
+                        .WithOrigins("http://localhost:5173")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
+
             var app = builder.Build();
+
+            app.Use(async (context, next) =>
+            {
+                Console.WriteLine($"[Middleware] {context.Request.Method} {context.Request.Path}");
+                await next();
+            });
+
 
             using (var scope = app.Services.CreateScope())
             {
@@ -76,8 +92,10 @@ namespace To_Do_List__Project
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseCors("AllowAll");
             app.UseSession();
             app.UseAuthorization();
+
 
             app.UseGraphQL<ISchema>("/graphql");
             app.UseGraphQLGraphiQL("/ui/graphql");

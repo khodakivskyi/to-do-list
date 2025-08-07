@@ -12,11 +12,11 @@ public class TaskType : ObjectGraphType<TaskModel>
 
         Field<DateTimeGraphType>("dueDate")
             .Description("Кінцева дата")
-            .Resolve(ctx => ctx.Source.Due_Date);
+        .Resolve(ctx => ctx.Source.Due_Date.HasValue ? ctx.Source.Due_Date.Value : null);
 
         Field<IntGraphType>("categoryId")
             .Description("ID категорії")
-            .Resolve(ctx => ctx.Source.Category_Id);
+        .Resolve(ctx => ctx.Source.Category_Id.HasValue ? ctx.Source.Category_Id.Value : null);
 
         Field<BooleanGraphType>("isCompleted")
             .Description("Чи виконане завдання")
@@ -28,6 +28,6 @@ public class TaskType : ObjectGraphType<TaskModel>
 
         Field<DateTimeGraphType>("completedAt")
             .Description("Дата завершення")
-            .Resolve(ctx => ctx.Source.Completed_At);
+        .Resolve(ctx => ctx.Source.Completed_At.HasValue ? ctx.Source.Completed_At.Value : null);
     }
 }
