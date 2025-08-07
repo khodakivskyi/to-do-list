@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/reducers/rootReducers.ts";
-import {addTaskRequest, loadCategoriesRequest} from "../redux/actions/rootActions";
+import {addTaskRequest} from "../redux/actions/rootActions";
 import '../css/AddTask.css';
 
 export const AddTask = () => {
-    const source = useSelector((state: RootState) => state.storage);
     const categories = useSelector((state: RootState) => state.categories);
     const dispatch = useDispatch();
     const [text, setText] = useState("");
@@ -21,10 +20,6 @@ export const AddTask = () => {
         setDate("");
         setCategoryId(undefined);
     };
-
-    useEffect(() => {
-        dispatch(loadCategoriesRequest(source));
-    }, [dispatch, source]);
 
     return (
         <form onSubmit={handleSubmit} className="addTaskForm">
@@ -49,12 +44,12 @@ export const AddTask = () => {
                     onChange={(e) =>
                         setCategoryId(e.target.value === "" ? undefined : Number(e.target.value))
                     }>
-                    <option value="" disabled>
+                    <option disabled selected>
                         Оберіть категорію
                     </option>
                     {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                            {category.name}
+                        <option key={category.id} value={category.id} >
+                            {category.categoryName}
                         </option>
                     ))}
                 </select>

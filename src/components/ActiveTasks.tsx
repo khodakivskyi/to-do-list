@@ -13,7 +13,7 @@ export const ActiveTasks = () => {
     const categories = useSelector((state: RootState) => state.categories);
 
     const getCategoryName = (id: number) => {
-        return categories.find(cat => cat.id === id)?.name ?? "Не вказано";
+        return categories.find(cat => cat.id === id)?.categoryName ?? "Не вказано";
     };
 
     return (

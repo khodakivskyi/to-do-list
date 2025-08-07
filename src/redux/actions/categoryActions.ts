@@ -5,7 +5,6 @@ export const setCategories = (categories: Category[]) => ({
     payload: categories,
 });
 
-
 export const loadCategoriesRequest = (source: Storage) => ({
     type: "LOAD_CATEGORIES_REQUEST" as const,
     payload: source,
