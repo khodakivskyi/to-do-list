@@ -73,13 +73,6 @@ namespace To_Do_List__Project
 
             var app = builder.Build();
 
-            app.Use(async (context, next) =>
-            {
-                Console.WriteLine($"[Middleware] {context.Request.Method} {context.Request.Path}");
-                await next();
-            });
-
-
             using (var scope = app.Services.CreateScope())
             {
                 scope.ServiceProvider.GetRequiredService<SQLCategoryRepository>().AddDefaultCategories();
