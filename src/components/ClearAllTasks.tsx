@@ -1,12 +1,12 @@
 import {useDispatch} from "react-redux";
-import { deleteTasks } from "../redux/actions/rootActions";
+import { deleteTasksRequest } from "../redux/actions/rootActions";
 import '../css/ClearAllTasks.css';
 
 export const ClearAllTasks = () => {
     const dispatch = useDispatch();
 
     const handleClearAll = () => {
-        dispatch(deleteTasks());
+        dispatch(deleteTasksRequest());
     }
     return (
         <div className={"clearBtn"}>

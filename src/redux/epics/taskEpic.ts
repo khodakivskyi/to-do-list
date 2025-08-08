@@ -3,7 +3,7 @@ import { ofType } from "redux-observable";
 import { map, switchMap, catchError } from "rxjs/operators";
 import { of, from } from "rxjs";
 
-import {addTask, deleteTasks, markAsCompleted, loadTasks, loadTasksFailed} from "../actions/rootActions";
+import {addTask, deleteTasks, markAsCompleted, loadTasks, loadTasksFailed, loadTasksRequest} from "../actions/rootActions";
 import type { RootAction } from "../actions/rootActions";
 import type { RootState } from "../reducers/rootReducers";
 import type { Task } from "../../types/rootTypes";
@@ -28,11 +28,16 @@ export const addTaskEpic: Epic<RootAction, RootAction, RootState> = (action$, st
             const variables: AddTaskVariables = {
                 text,
                 source,
-                dueDate: dueDate || null,
+                dueDate: dueDate ? new Date(`${dueDate}T00:00:00`).toISOString() : null,
                 categoryId: categoryId || null,
             };
             return from(graphQLClient.request<{ addTask: Task }>(ADD_TASK, variables)).pipe(
-                map(response => addTask(response.addTask)),
+                map(response => {
+                    return addTask(response.addTask);
+                }),
+                switchMap(() => {
+                    return of(loadTasksRequest("all", state$.value.storage));
+                }),
                 catchError(error => {
                     console.error("Error adding task:", error);
                     return of({ type: "ADD_TASK_FAILED", payload: error } as RootAction);

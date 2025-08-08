@@ -32,7 +32,7 @@ export const CompletedTasks = () => {
                         <tr className="completed" key={task.id}>
                             <td>{task.text}</td>
                             <td>{task.categoryId !== undefined ? getCategoryName(task.categoryId) : "Не вказано"}</td>
-                            <td>{task.dueDate || "Не вказано"}</td>
+                            <td>{task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : "Не вказано"}</td>
                             <td>{task.createdAt.slice(0, 10)}</td>
                             <td>
                                 {task.completedAt
@@ -43,7 +43,7 @@ export const CompletedTasks = () => {
                     ))
                 ) : (
                     <tr>
-                        <td colSpan={5}>Немає завдань для відображення</td>
+                    <td colSpan={5}>Немає завдань для відображення</td>
                     </tr>
                 )}
                 </tbody>

@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../redux/reducers/rootReducers.ts";
-import { markAsCompleted } from "../redux/actions/rootActions";
+import { markAsCompletedRequest} from "../redux/actions/rootActions";
 import '../css/TaskList.css';
 
 export const ActiveTasks = () => {
@@ -35,19 +35,19 @@ export const ActiveTasks = () => {
                         <tr key={task.id}>
                             <td>{task.text}</td>
                             <td>{task.categoryId !== undefined ? getCategoryName(task.categoryId) : "Не вказано"}</td>
-                            <td>{task.dueDate || "Не вказано"}</td>
+                            <td>{task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : "Не вказано"}</td>
                             <td>{task.createdAt.slice(0, 10)}</td>
                             <td>
                                 <input
                                     type="checkbox"
-                                    onChange={() => dispatch(markAsCompleted(task.id))}
+                                    onChange={() => dispatch(markAsCompletedRequest(task.id))}
                                 />
                             </td>
                         </tr>
                     ))
                 ) : (
                     <tr>
-                        <td colSpan={5}>Немає завдань для відображення</td>
+                    <td colSpan={5}>Немає завдань для відображення</td>
                     </tr>
                 )}
                 </tbody>
