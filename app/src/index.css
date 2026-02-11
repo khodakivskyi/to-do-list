@@ -1,0 +1,16 @@
+html, body{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+html {
+  position: relative;
+  min-height: 100%;
+  font-size: 14px;
+}
+
+body {
+  background-color: lightgray;
+  font-family: Arial;
+  text-align: center;
+}

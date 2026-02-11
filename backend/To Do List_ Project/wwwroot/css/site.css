@@ -1,0 +1,128 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    background-color: lightgray;
+}
+
+.default-form {
+    background-color: whitesmoke;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #021230;
+    border-radius: 9px;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    width: 50%;
+}
+
+    .default-form input, select {
+        border-radius: 10px;
+        border: 1px solid #4facfe;
+        width: 532px;
+        height: 45px;
+        transition: transform 0.5s ease;
+        padding: 12px;
+    }
+
+    .default-form * {
+        margin: 8px;
+    }
+
+    .default-form input:hover {
+        background-color: #ececec
+    }
+
+button {
+    background: linear-gradient(135deg, #4facfe, #021230);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 532px;
+}
+
+    button:hover {
+        transform: scale(1.05);
+    }
+
+    button:active {
+        transform: scale(0.97);
+        box-shadow: 0 3px 8px rgba(0, 191, 255, 0.4);
+    }
+
+.text-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.default-form div {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    gap: 40px;
+    align-items: center;
+    justify-content: space-between;
+    width: 532px;
+}
+
+    .default-form div input, .default-form div select {
+        width: 250px;
+        margin: 0;
+    }
+
+table {
+    background-color: whitesmoke;
+    border-radius: 9px !important;
+}
+
+h1 {
+    margin: 20px 50px;
+}
+
+h2 {
+    font-weight: normal;
+    margin-top: 50px;
+}
+
+table:nth-of-type(2) tbody tr.completed td {
+    text-decoration: line-through;
+}
+
+.down button {
+    margin: 50px 0 0 0;
+    width: 532px;
+}
+
+.storage-form {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+
+.storage {
+    width: 100px;
+}

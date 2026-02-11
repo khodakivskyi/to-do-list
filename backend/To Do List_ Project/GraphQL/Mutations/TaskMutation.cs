@@ -1,0 +1,95 @@
+﻿using GraphQL;
+using GraphQL.Types;
+using To_Do_List__Project.Database.SQLRepositories;
+using To_Do_List__Project.Database.XMLRepositories;
+using To_Do_List__Project.DatabaseServices.Interfaces;
+using To_Do_List__Project.Models;
+
+public class TaskMutation : ObjectGraphType
+{
+    public TaskMutation()
+    {
+        Field<TaskType>("addTask")
+       .Argument<NonNullGraphType<StringGraphType>>("text")
+       .Argument<DateTimeGraphType>("dueDate")
+       .Argument<IntGraphType>("categoryId")
+       .Argument<StringGraphType>("source")
+       .Resolve(context =>
+       {
+           var text = context.GetArgument<string>("text");
+           var dueDate = context.GetArgument<DateTime?>("dueDate");
+           var categoryId = context.GetArgument<int?>("categoryId");
+           var source = context.GetArgument<string>("source")?.ToLower();
+
+           var services = context.RequestServices;
+
+           ITaskService taskService = source switch
+           {
+               "xml" => services!.GetRequiredService<XMLTaskRepository>(),
+               _ => services!.GetRequiredService<SQLTaskRepository>()
+           };
+
+           var taskToAdd = new TaskModel
+           {
+               Text = text,
+               Due_Date = dueDate,
+               Category_Id = categoryId,
+               Is_Completed = false,
+               Created_At = DateTime.Now
+           };
+
+           var createdTask = taskService.AddTask(taskToAdd);
+
+           return createdTask;
+       });
+
+        Field<BooleanGraphType>("clearTasks")
+            .Argument<StringGraphType>("source")
+            .Resolve(context =>
+            {
+                var source = context.GetArgument<string>("source")?.ToLower();
+
+                var services = context.RequestServices;
+
+                ITaskService taskService = source switch
+                {
+                    "xml" => services!.GetRequiredService<XMLTaskRepository>(),
+                    _ => services!.GetRequiredService<SQLTaskRepository>()
+                };
+
+                bool res = taskService.ClearTasks();
+
+                return res;
+            });
+
+        Field<BooleanGraphType>("updateTask")
+            .Argument<NonNullGraphType<IntGraphType>>("id")
+            .Argument<StringGraphType>("source")
+            .Resolve(context =>
+            {
+                var id = context.GetArgument<int>("id");
+                var source = context.GetArgument<string>("source")?.ToLower();
+
+                var services = context.RequestServices;
+
+                ITaskService taskService = source switch
+                {
+                    "xml" => services!.GetRequiredService<XMLTaskRepository>(),
+                    _ => services!.GetRequiredService<SQLTaskRepository>()
+                };
+
+                var taskToUpdate = taskService.GetTaskById(id);
+                if (taskToUpdate == null)
+                {
+                    return false;
+                }
+
+                taskToUpdate.Is_Completed = true;
+                taskToUpdate.Completed_At = DateTime.Now;
+
+                bool res = taskService.UpdateTask(taskToUpdate);
+
+                return res;
+            });
+    }
+}
