@@ -1,25 +1,24 @@
 # ===============================
 # Backend (ASP.NET Core)
 # ===============================
-/backend/bin/
-/backend/obj/
-/backend/*.user
-/backend/*.suo
-/backend/*.vsp
-/backend/*.vspscc
-/backend/launchSettings.json
-/backend/.vs/
-/backend/*.db
-/backend/*.log
+bin/
+obj/
+*.user
+*.suo
+*.vsp
+*.vspscc
+launchSettings.json
+*.db
+*.log
 
 # ===============================
-# Frontend (React + TypeScript)
+# App (React + TypeScript)
 # ===============================
-/frontend/node_modules/
-/frontend/dist/
-/frontend/build/
-/frontend/.env
-/frontend/.cache
+/app/node_modules/
+/app/dist/
+/app/build/
+/app/.env
+/app/.cache
 
 # ===============================
 # OS Files
@@ -45,5 +44,4 @@ Thumbs.db
 # ===============================
 # Environment Variables
 # ===============================
-backend/.env
 .env
