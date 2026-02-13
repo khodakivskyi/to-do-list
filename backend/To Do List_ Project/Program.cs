@@ -1,7 +1,4 @@
 using GraphQL;
-using GraphQL.MicrosoftDI;
-using GraphQL.Server;
-using GraphQL.SystemTextJson;
 using GraphQL.Types;
 using To_Do_List__Project.Database.SQLRepositories;
 using To_Do_List__Project.Database.XMLRepositories;
@@ -9,7 +6,7 @@ using To_Do_List__Project.GraphQL;
 using To_Do_List__Project.GraphQL.Mutations;
 using To_Do_List__Project.GraphQL.Queries;
 using To_Do_List__Project.GraphQL.Types;
-
+using dotenv.net;
 
 namespace To_Do_List__Project
 {
@@ -17,10 +14,16 @@ namespace To_Do_List__Project
     {
         public static void Main(string[] args)
         {
+            DotEnv.Load();
+
             var builder = WebApplication.CreateBuilder(args);
 
+            // Read environment variables
+            var envVars = DotEnv.Read();
+            string connectionString = envVars["DATABASE_URL"] ?? throw new InvalidOperationException("DATABASE_URL is not set");
+            string appUrl = envVars["APP_URL"] ?? "http://localhost:5000";
+
             // SQL
-            var connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ToDo;Integrated Security=True;Encrypt=True";
             builder.Services.AddScoped<SQLTaskRepository>(_ => new SQLTaskRepository(connectionString));
             builder.Services.AddScoped<SQLCategoryRepository>(_ => new SQLCategoryRepository(connectionString));
 
@@ -66,7 +69,7 @@ namespace To_Do_List__Project
             {
                 options.AddPolicy("AllowAll",
                     policy => policy
-                        .WithOrigins("http://localhost:5173")
+                        .WithOrigins(appUrl)
                         .AllowAnyMethod()
                         .AllowAnyHeader());
             });
