@@ -5,6 +5,7 @@ using todo.GraphQL;
 using todo.GraphQL.Mutations;
 using todo.GraphQL.Queries;
 using todo.GraphQL.Types;
+using todo.Middlewares;
 using todo.Models;
 using todo.Repositories.SQLRepositories;
 using todo.Repositories.XMLRepositories;
@@ -79,15 +80,13 @@ namespace todo
                 await categoryService.AddDefaultCategoriesAsync(defaultCategories);
             }
 
-
-            if (!app.Environment.IsDevelopment())
-                app.UseExceptionHandler("/Home/Error");
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
             app.UseCors("AllowAll");
             app.UseSession();
+
+            app.UseMiddleware<GlobalExceptionMiddleware>();
 
             app.UseGraphQL<ISchema>("/graphql");
             app.UseGraphQLGraphiQL("/ui/graphql");
