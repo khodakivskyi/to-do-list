@@ -4,11 +4,11 @@ using todo.Models;
 
 namespace todo.Repositories.XMLRepositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class XmlCategoryRepository : ICategoryRepository
     {
         private readonly string _filePath;
 
-        public CategoryRepository(string filepath)
+        public XmlCategoryRepository(string filepath)
         {
             _filePath = filepath;
 

@@ -1,12 +1,13 @@
+using dotenv.net;
 using GraphQL;
 using GraphQL.Types;
-using todo.Repositories.SQLRepositories;
-using todo.Repositories.XMLRepositories;
+using todo.Models;
 using todo.GraphQL;
 using todo.GraphQL.Mutations;
 using todo.GraphQL.Queries;
 using todo.GraphQL.Types;
-using dotenv.net;
+using todo.Repositories.SQLRepositories;
+using todo.Repositories.XMLRepositories;
 
 namespace todo
 {
@@ -23,37 +24,28 @@ namespace todo
             string connectionString = envVars["DATABASE_URL"] ?? throw new InvalidOperationException("DATABASE_URL is not set");
             string appUrl = envVars["APP_URL"] ?? "http://localhost:5000";
 
-            // SQL
-            builder.Services.AddScoped(_ => new Repositories.SQLRepositories.SqlTaskRepository(connectionString));
-            builder.Services.AddScoped(_ => new Repositories.SQLRepositories.SqlCategoryRepository(connectionString));
 
-            // XML
-            builder.Services.AddScoped(_ =>
-            {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "XMLdb");
-                Directory.CreateDirectory(path);
-                return new Repositories.XMLRepositories.XmlTaskRepository(Path.Combine(path, "tasks.xml"));
-            });
+            // Configure sql repositories and xml storages + repositories
+            builder.Services.AddScoped<SqlTaskRepository>(sp => new SqlTaskRepository(connectionString));
+            builder.Services.AddScoped<SqlCategoryRepository>(sp => new SqlCategoryRepository(connectionString));
 
-            builder.Services.AddScoped(_ =>
-            {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "XMLdb");
-                Directory.CreateDirectory(path);
-                return new Repositories.XMLRepositories.XmlCategoryRepository(Path.Combine(path, "categories.xml"));
-            });
+            var xmlSettings = builder.Configuration.GetSection("XmlStorageConfiguration").Get<XmlDbSettings>() ?? new XmlDbSettings();
+            var xmlFolderPath = Path.Combine(Directory.GetCurrentDirectory(), xmlSettings.Folder);
+            Directory.CreateDirectory(xmlFolderPath);
 
-            // GraphQL Types
+            var xmlTasksPath = Path.Combine(xmlFolderPath, xmlSettings.TasksFile);
+            var xmlCategoriesPath = Path.Combine(xmlFolderPath, xmlSettings.CategoriesFile);
+
+            builder.Services.AddScoped(sp => new XmlTaskRepository(Path.Combine(xmlFolderPath, "tasks.xml")));
+            builder.Services.AddScoped(sp => new XmlCategoryRepository(Path.Combine(xmlFolderPath, "categories.xml")));
+
+
+            // GraphQL
             builder.Services.AddSingleton<TaskType>();
             builder.Services.AddSingleton<CategoryType>();
-
-            builder.Services.AddSingleton<TaskQuery>();
-            builder.Services.AddSingleton<CategoryQuery>();
             builder.Services.AddSingleton<RootQuery>();
-
-            builder.Services.AddSingleton<TaskMutation>();
             builder.Services.AddSingleton<RootMutation>();
             builder.Services.AddSingleton<ISchema, AppSchema>();
-
             builder.Services.AddGraphQL(builder =>
             {
                 builder.AddSystemTextJson();
@@ -90,8 +82,6 @@ namespace todo
             app.UseRouting();
             app.UseCors("AllowAll");
             app.UseSession();
-            app.UseAuthorization();
-
 
             app.UseGraphQL<ISchema>("/graphql");
             app.UseGraphQLGraphiQL("/ui/graphql");
