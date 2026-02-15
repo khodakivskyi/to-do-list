@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTaskModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TaskModel>
+    <Id>1</Id>
+    <Text>вава</Text>
+    <Due_Date xsi:nil="true" />
+    <Category_Id xsi:nil="true" />
+    <Is_Completed>false</Is_Completed>
+    <Created_At>2026-02-15T16:50:11.5205186+02:00</Created_At>
+    <Completed_At xsi:nil="true" />
+  </TaskModel>
+  <TaskModel>
+    <Id>2</Id>
+    <Text>вавав</Text>
+    <Due_Date xsi:nil="true" />
+    <Category_Id xsi:nil="true" />
+    <Is_Completed>true</Is_Completed>
+    <Created_At>2026-02-15T16:50:18.276315+02:00</Created_At>
+    <Completed_At>2026-02-15T16:50:30.2475148+02:00</Completed_At>
+  </TaskModel>
+</ArrayOfTaskModel>

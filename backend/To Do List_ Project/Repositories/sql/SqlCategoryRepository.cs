@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
-using todo.Repositories.Interfaces;
+using System.Data;
 using todo.Models;
+using todo.Repositories.Interfaces;
 
 namespace todo.Repositories.SQLRepositories
 {
@@ -13,32 +14,22 @@ namespace todo.Repositories.SQLRepositories
             _connectionString = connectionString;
         }
 
-        public void AddDefaultCategories()
+        public async Task AddDefaultCategoriesAsync(List<string> defaultCategories)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
 
-                var categories = GetCategoriesAsync();
+                var categories = await GetCategoriesAsync();
 
-                if (categories == null || categories.Count == 0)
+                if (categories == null || !categories.Any())
                 {
-                    categories = new List<Category>
-                    {
-                        new() { Category_Name = "Робота" },
-                        new() { Category_Name = "Особисте" },
-                        new() { Category_Name = "Навчання" },
-                        new() { Category_Name = "Покупки" }
-                    };
-
-                    foreach (var category in categories)
+                    foreach (var name in defaultCategories)
                     {
                         string insertQuery = "INSERT INTO Categories (Category_Name) VALUES (@Category_Name)";
-                        using (var insertCommand = new SqlCommand(insertQuery, connection))
-                        {
-                            insertCommand.Parameters.AddWithValue("@Category_Name", category.Category_Name);
-                            insertCommand.ExecuteNonQuery();
-                        }
+                        using var cmd = new SqlCommand(insertQuery, connection);
+                        cmd.Parameters.Add("@Category_Name", SqlDbType.NVarChar).Value = name;
+                        await cmd.ExecuteNonQueryAsync();
                     }
                 }
             }

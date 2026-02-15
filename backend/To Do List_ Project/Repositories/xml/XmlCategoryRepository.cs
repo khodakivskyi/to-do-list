@@ -17,21 +17,21 @@ namespace todo.Repositories.XMLRepositories
                 SaveCategories(new List<Category>());
             }
         }
-        public void AddDefaultCategories()
+        public async Task AddDefaultCategoriesAsync(List<string> defaultCategories)
         {
-            var categories = GetCategories();
+            var categories = await GetCategoriesAsync();
 
-            if (categories == null || categories.Count == 0)
+            if (categories == null || !categories.Any())
             {
-                categories = new List<Category>
+                var newCategories = defaultCategories
+                    .Select((name, index) => new Category
                     {
-                        new() { Category_Name = "Робота" },
-                        new() { Category_Name = "Особисте" },
-                        new() { Category_Name = "Навчання" },
-                        new() { Category_Name = "Покупки" }
-                    };
+                        Category_Id = index + 1,
+                        Category_Name = name
+                    })
+                    .ToList();
 
-                SaveCategories(categories);
+                SaveCategories(newCategories);
             }
         }
 

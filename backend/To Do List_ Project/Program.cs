@@ -1,19 +1,20 @@
 using dotenv.net;
 using GraphQL;
 using GraphQL.Types;
-using todo.Models;
 using todo.GraphQL;
 using todo.GraphQL.Mutations;
 using todo.GraphQL.Queries;
 using todo.GraphQL.Types;
+using todo.Models;
 using todo.Repositories.SQLRepositories;
 using todo.Repositories.XMLRepositories;
+using todo.Services.Interfaces;
 
 namespace todo
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             DotEnv.Load();
 
@@ -68,11 +69,16 @@ namespace todo
 
             var app = builder.Build();
 
+            var defaultCategories = app.Configuration.GetSection("DefaultCategories").Get<List<string>>() ??
+                    throw new InvalidOperationException("You must add default categories");
+
             using (var scope = app.Services.CreateScope())
             {
-                scope.ServiceProvider.GetRequiredService<Repositories.SQLRepositories.SqlCategoryRepository>().AddDefaultCategories();
-                scope.ServiceProvider.GetRequiredService<Repositories.XMLRepositories.XmlCategoryRepository>().AddDefaultCategories();
+                var categoryService = scope.ServiceProvider.GetRequiredService<ICategoryService>();
+
+                await categoryService.AddDefaultCategoriesAsync(defaultCategories);
             }
+
 
             if (!app.Environment.IsDevelopment())
                 app.UseExceptionHandler("/Home/Error");
