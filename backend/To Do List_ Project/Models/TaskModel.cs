@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace To_Do_List__Project.Models
+namespace todo.Models
 {
     public class TaskModel
     {
@@ -11,7 +11,7 @@ namespace To_Do_List__Project.Models
         public required string Text { set; get; }
         public DateTime? Due_Date { get; set; }
         public int? Category_Id { set; get; }
-        public bool? Is_Completed { get; set; } = false;
+        public bool Is_Completed { get; set; } = false;
         public DateTime Created_At {  get; set; }= DateTime.Now;
         public DateTime? Completed_At { get; set; }
     }

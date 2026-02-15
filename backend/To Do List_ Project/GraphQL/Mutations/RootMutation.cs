@@ -1,6 +1,6 @@
 ﻿using GraphQL.Types;
 
-namespace To_Do_List__Project.GraphQL.Mutations
+namespace todo.GraphQL.Mutations
 {
     public class RootMutation : ObjectGraphType
     {

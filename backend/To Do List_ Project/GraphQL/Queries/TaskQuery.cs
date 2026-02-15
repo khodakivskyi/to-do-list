@@ -1,10 +1,10 @@
 ﻿using GraphQL.Types;
 using GraphQL;
-using To_Do_List__Project.DatabaseServices.Interfaces;
-using To_Do_List__Project.Database.SQLRepositories;
-using To_Do_List__Project.Database.XMLRepositories;
+using todo.Repositories.Interfaces;
+using todo.Repositories.SQLRepositories;
+using todo.Repositories.XMLRepositories;
 
-namespace To_Do_List__Project.GraphQL.Queries
+namespace todo.GraphQL.Queries
 {
     public class TaskQuery : ObjectGraphType
     {
@@ -20,17 +20,17 @@ namespace To_Do_List__Project.GraphQL.Queries
 
                     var services = context.RequestServices;
 
-                    ITaskService taskService = source switch
+                    ITaskRepository taskService = source switch
                     {
-                        "xml" => services!.GetRequiredService<XMLTaskRepository>(),
-                        _ => services!.GetRequiredService<SQLTaskRepository>()
+                        "xml" => services!.GetRequiredService<Repositories.XMLRepositories.XmlTaskRepository>(),
+                        _ => services!.GetRequiredService<Repositories.SQLRepositories.SqlTaskRepository>()
                     };
 
                     return status switch
                     {
-                        "active" => taskService.GetActiveTasks(),
-                        "completed" => taskService.GetCompletedTasks(),
-                        _ => taskService.GetAllTasks()
+                        "active" => taskService.GetActiveTasksAsync(),
+                        "completed" => taskService.GetCompletedTasksAsync(),
+                        _ => taskService.GetAllTasksAsync()
                     };
                 });
 
@@ -45,13 +45,13 @@ namespace To_Do_List__Project.GraphQL.Queries
 
                     var services = context.RequestServices;
 
-                    ITaskService taskService = source switch
+                    ITaskRepository taskService = source switch
                     {
-                        "xml" => services!.GetRequiredService<XMLTaskRepository>(),
-                        _ => services!.GetRequiredService<SQLTaskRepository>()
+                        "xml" => services!.GetRequiredService<Repositories.XMLRepositories.XmlTaskRepository>(),
+                        _ => services!.GetRequiredService<Repositories.SQLRepositories.SqlTaskRepository>()
                     };
 
-                    return taskService.GetTaskById(id);
+                    return taskService.GetTaskByIdAsync(id);
                 });
         }
     }

@@ -1,9 +1,9 @@
 ﻿using GraphQL;
 using GraphQL.Types;
-using To_Do_List__Project.Database.SQLRepositories;
-using To_Do_List__Project.Database.XMLRepositories;
-using To_Do_List__Project.DatabaseServices.Interfaces;
-using To_Do_List__Project.Models;
+using todo.Repositories.SQLRepositories;
+using todo.Repositories.XMLRepositories;
+using todo.Repositories.Interfaces;
+using todo.Models;
 
 public class TaskMutation : ObjectGraphType
 {
@@ -23,10 +23,10 @@ public class TaskMutation : ObjectGraphType
 
            var services = context.RequestServices;
 
-           ITaskService taskService = source switch
+           ITaskRepository taskService = source switch
            {
-               "xml" => services!.GetRequiredService<XMLTaskRepository>(),
-               _ => services!.GetRequiredService<SQLTaskRepository>()
+               "xml" => services!.GetRequiredService<todo.Repositories.XMLRepositories.XmlTaskRepository>(),
+               _ => services!.GetRequiredService<todo.Repositories.SQLRepositories.SqlTaskRepository>()
            };
 
            var taskToAdd = new TaskModel
@@ -38,7 +38,7 @@ public class TaskMutation : ObjectGraphType
                Created_At = DateTime.Now
            };
 
-           var createdTask = taskService.AddTask(taskToAdd);
+           var createdTask = taskService.AddTaskAsync(taskToAdd);
 
            return createdTask;
        });
@@ -51,13 +51,13 @@ public class TaskMutation : ObjectGraphType
 
                 var services = context.RequestServices;
 
-                ITaskService taskService = source switch
+                ITaskRepository taskService = source switch
                 {
-                    "xml" => services!.GetRequiredService<XMLTaskRepository>(),
-                    _ => services!.GetRequiredService<SQLTaskRepository>()
+                    "xml" => services!.GetRequiredService<todo.Repositories.XMLRepositories.XmlTaskRepository>(),
+                    _ => services!.GetRequiredService<todo.Repositories.SQLRepositories.SqlTaskRepository>()
                 };
 
-                bool res = taskService.ClearTasks();
+                bool res = taskService.ClearTasksAsync();
 
                 return res;
             });
@@ -72,13 +72,13 @@ public class TaskMutation : ObjectGraphType
 
                 var services = context.RequestServices;
 
-                ITaskService taskService = source switch
+                ITaskRepository taskService = source switch
                 {
-                    "xml" => services!.GetRequiredService<XMLTaskRepository>(),
-                    _ => services!.GetRequiredService<SQLTaskRepository>()
+                    "xml" => services!.GetRequiredService<todo.Repositories.XMLRepositories.XmlTaskRepository>(),
+                    _ => services!.GetRequiredService<todo.Repositories.SQLRepositories.SqlTaskRepository>()
                 };
 
-                var taskToUpdate = taskService.GetTaskById(id);
+                var taskToUpdate = taskService.GetTaskByIdAsync(id);
                 if (taskToUpdate == null)
                 {
                     return false;

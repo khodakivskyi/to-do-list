@@ -1,14 +1,14 @@
 using GraphQL;
 using GraphQL.Types;
-using To_Do_List__Project.Database.SQLRepositories;
-using To_Do_List__Project.Database.XMLRepositories;
-using To_Do_List__Project.GraphQL;
-using To_Do_List__Project.GraphQL.Mutations;
-using To_Do_List__Project.GraphQL.Queries;
-using To_Do_List__Project.GraphQL.Types;
+using todo.Repositories.SQLRepositories;
+using todo.Repositories.XMLRepositories;
+using todo.GraphQL;
+using todo.GraphQL.Mutations;
+using todo.GraphQL.Queries;
+using todo.GraphQL.Types;
 using dotenv.net;
 
-namespace To_Do_List__Project
+namespace todo
 {
     public class Program
     {
@@ -24,22 +24,22 @@ namespace To_Do_List__Project
             string appUrl = envVars["APP_URL"] ?? "http://localhost:5000";
 
             // SQL
-            builder.Services.AddScoped<SQLTaskRepository>(_ => new SQLTaskRepository(connectionString));
-            builder.Services.AddScoped<SQLCategoryRepository>(_ => new SQLCategoryRepository(connectionString));
+            builder.Services.AddScoped(_ => new Repositories.SQLRepositories.SqlTaskRepository(connectionString));
+            builder.Services.AddScoped(_ => new Repositories.SQLRepositories.SqlCategoryRepository(connectionString));
 
             // XML
-            builder.Services.AddScoped<XMLTaskRepository>(_ =>
+            builder.Services.AddScoped(_ =>
             {
                 var path = Path.Combine(Directory.GetCurrentDirectory(), "XMLdb");
                 Directory.CreateDirectory(path);
-                return new XMLTaskRepository(Path.Combine(path, "tasks.xml"));
+                return new Repositories.XMLRepositories.XmlTaskRepository(Path.Combine(path, "tasks.xml"));
             });
 
-            builder.Services.AddScoped<XMLCategoryRepository>(_ =>
+            builder.Services.AddScoped(_ =>
             {
                 var path = Path.Combine(Directory.GetCurrentDirectory(), "XMLdb");
                 Directory.CreateDirectory(path);
-                return new XMLCategoryRepository(Path.Combine(path, "categories.xml"));
+                return new Repositories.XMLRepositories.XmlCategoryRepository(Path.Combine(path, "categories.xml"));
             });
 
             // GraphQL Types
@@ -78,8 +78,8 @@ namespace To_Do_List__Project
 
             using (var scope = app.Services.CreateScope())
             {
-                scope.ServiceProvider.GetRequiredService<SQLCategoryRepository>().AddDefaultCategories();
-                scope.ServiceProvider.GetRequiredService<XMLCategoryRepository>().AddDefaultCategories();
+                scope.ServiceProvider.GetRequiredService<Repositories.SQLRepositories.SqlCategoryRepository>().AddDefaultCategories();
+                scope.ServiceProvider.GetRequiredService<Repositories.XMLRepositories.XmlCategoryRepository>().AddDefaultCategories();
             }
 
             if (!app.Environment.IsDevelopment())
