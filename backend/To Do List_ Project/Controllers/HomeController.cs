@@ -25,7 +25,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Task_Add(TaskModel task)
+    public async Task<IActionResult> AddTask(TaskModel task)
     {
         var storageType = GetCurrentStorage();
         await _taskService.AddTaskAsync(task, storageType);
@@ -34,7 +34,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Is_Completed(int id)
+    public async Task<IActionResult> MarkTaskAsComplete(int id)
     {
         var storageType = GetCurrentStorage();
         await _taskService.MarkTaskAsCompleteAsync(id, storageType);
@@ -52,7 +52,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult Storage_Choose(string storage)
+    public IActionResult ChooseStorage(string storage)
     {
         HttpContext.Session.SetString("StorageType", storage);
 
