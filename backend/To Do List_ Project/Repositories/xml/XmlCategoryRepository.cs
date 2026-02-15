@@ -1,14 +1,14 @@
 ﻿using System.Xml.Serialization;
-using To_Do_List__Project.DatabaseServices.Interfaces;
-using To_Do_List__Project.Models;
+using todo.Repositories.Interfaces;
+using todo.Models;
 
-namespace To_Do_List__Project.Database.XMLRepositories
+namespace todo.Repositories.XMLRepositories
 {
-    public class XMLCategoryRepository : ICategoryService
+    public class CategoryRepository : ICategoryRepository
     {
         private readonly string _filePath;
 
-        public XMLCategoryRepository(string filepath)
+        public CategoryRepository(string filepath)
         {
             _filePath = filepath;
 
@@ -34,22 +34,17 @@ namespace To_Do_List__Project.Database.XMLRepositories
                 SaveCategories(categories);
             }
         }
-        public List<Category> GetCategories()
-        {
-            try
-            {
-                if (!File.Exists(_filePath))
-                    return new List<Category>();
 
-                var serializer = new XmlSerializer(typeof(List<Category>));
-                using var stream = new FileStream(_filePath, FileMode.Open);
-                return (List<Category>)serializer.Deserialize(stream)! ?? new List<Category>();
-            }
-            catch
-            {
+        public async Task<IEnumerable<Category>> GetCategoriesAsync()
+        {
+            if (!File.Exists(_filePath))
                 return new List<Category>();
-            }
+
+            var serializer = new XmlSerializer(typeof(List<Category>));
+            using var stream = new FileStream(_filePath, FileMode.Open);
+            return (List<Category>)await Task.Run(() => serializer.Deserialize(stream)!) ?? new List<Category>();
         }
+
         private void SaveCategories(List<Category> categories)
         {
             var serializer = new XmlSerializer(typeof(List<Category>));

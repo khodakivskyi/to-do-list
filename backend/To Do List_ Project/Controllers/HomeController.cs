@@ -1,31 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Client.Extensions.Msal;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using To_Do_List__Project.Database.SQLRepositories;
-using To_Do_List__Project.Database.XMLRepositories;
-using To_Do_List__Project.Models;
+using todo.Models;
+using todo.Services.Interfaces;
 
-namespace To_Do_List__Project.Controllers;
+namespace todo.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ITaskService _taskService;
 
-    private readonly SQLTaskRepository _sqlTaskRepository;
-    private readonly SQLCategoryRepository _sqlCategoryRepository;
+    private readonly Repositories.SQLRepositories.SqlCategoryRepository _sqlCategoryRepository;
 
-    private readonly XMLTaskRepository _xmlTaskRepository;
-    private readonly XMLCategoryRepository _xmlCategoryRepository;
+    private readonly Repositories.XMLRepositories.XmlTaskRepository _xmlTaskRepository;
+    private readonly Repositories.XMLRepositories.XmlCategoryRepository _xmlCategoryRepository;
 
-    public HomeController(ILogger<HomeController> logger, SQLTaskRepository taskRepository, SQLCategoryRepository categoryRepository, 
-        XMLTaskRepository xmlTaskRepository, XMLCategoryRepository xmlCategoryRepository)
+    public HomeController(ITaskService taskService)
     {
-        _logger = logger;
-        _sqlTaskRepository = taskRepository;
-        _sqlCategoryRepository = categoryRepository;
-        _xmlTaskRepository = xmlTaskRepository;
-        _xmlCategoryRepository = xmlCategoryRepository;
+        _taskService = taskService;
     }
 
     public IActionResult Index()

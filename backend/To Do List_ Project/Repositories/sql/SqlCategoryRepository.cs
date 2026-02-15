@@ -1,14 +1,14 @@
 ﻿using Microsoft.Data.SqlClient;
-using To_Do_List__Project.DatabaseServices.Interfaces;
-using To_Do_List__Project.Models;
+using todo.Repositories.Interfaces;
+using todo.Models;
 
-namespace To_Do_List__Project.Database.SQLRepositories
+namespace todo.Repositories.SQLRepositories
 {
-    public class SQLCategoryRepository : ICategoryService
+    public class SqlCategoryRepository : ICategoryRepository
     {
         private readonly string _connectionString;
 
-        public SQLCategoryRepository(string connectionString)
+        public SqlCategoryRepository(string connectionString)
         {
             _connectionString = connectionString;
         }
@@ -19,7 +19,7 @@ namespace To_Do_List__Project.Database.SQLRepositories
             {
                 connection.Open();
 
-                var categories = GetCategories();
+                var categories = GetCategoriesAsync();
 
                 if (categories == null || categories.Count == 0)
                 {
@@ -44,7 +44,7 @@ namespace To_Do_List__Project.Database.SQLRepositories
             }
         }
 
-        public List<Category> GetCategories()
+        public async Task<IEnumerable<Category>> GetCategoriesAsync()
         {
             var categories = new List<Category>();
 
@@ -53,7 +53,7 @@ namespace To_Do_List__Project.Database.SQLRepositories
                 string query = "SELECT * FROM Categories";
                 var command = new SqlCommand(query, connection);
                 connection.Open();
-                var reader = command.ExecuteReader();
+                var reader = await command.ExecuteReaderAsync();
 
                 while (reader.Read())
                 {
@@ -67,6 +67,5 @@ namespace To_Do_List__Project.Database.SQLRepositories
 
             return categories;
         }
-
     }
 }

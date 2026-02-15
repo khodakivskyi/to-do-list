@@ -1,5 +1,5 @@
 ﻿using GraphQL.Types;
-using To_Do_List__Project.Models;
+using todo.Models;
 
 public class TaskType : ObjectGraphType<TaskModel>
 {

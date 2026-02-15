@@ -1,22 +1,22 @@
 ﻿@{
 	ViewData["Title"] = "Home Page";
-	var activeTasks = ViewBag.activeTasks as List<To_Do_List__Project.Models.TaskModel>;
-	var completedTasks = ViewBag.completedTasks as List<To_Do_List__Project.Models.TaskModel>;
-	var categories = ViewBag.Categories as List<To_Do_List__Project.Models.Category>;
+	var activeTasks = ViewBag.activeTasks as List<todo.Models.TaskModel>;
+	var completedTasks = ViewBag.completedTasks as List<todo.Models.TaskModel>;
+	var categories = ViewBag.Categories as List<todo.Models.Category>;
 }
 
 <form asp-action="Storage_Choose" method="post" class="storage-form">
 	<label for="storage">Активне сховище:</label>
 	<select class="storage" name="storage" onchange="this.form.submit()">
-		@if ((ViewBag.SelectedStorage as string) == "SQL")
+		@if ((ViewBag.SelectedStorage as string) == "sql")
 		{
-			<option value="SQL" selected>SQL</option>
-			<option value="XML">XML</option>
+			<option value="sql" selected>SQL</option>
+			<option value="xnl">XML</option>
 		}
 		else
 		{
-			<option value="SQL">SQL</option>
-			<option value="XML" selected>XML</option>
+			<option value="sql">SQL</option>
+			<option value="xnl" selected>XML</option>
 		}
 	</select>
 </form>

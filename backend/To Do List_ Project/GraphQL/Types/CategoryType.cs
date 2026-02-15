@@ -1,7 +1,7 @@
 ﻿using GraphQL.Types;
-using To_Do_List__Project.Models;
+using todo.Models;
 
-namespace To_Do_List__Project.GraphQL.Types
+namespace todo.GraphQL.Types
 {
     public class CategoryType : ObjectGraphType<Category>
     {

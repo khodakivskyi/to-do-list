@@ -1,11 +1,11 @@
 ﻿using GraphQL;
 using GraphQL.Types;
-using To_Do_List__Project.Database.SQLRepositories;
-using To_Do_List__Project.Database.XMLRepositories;
-using To_Do_List__Project.DatabaseServices.Interfaces;
-using To_Do_List__Project.GraphQL.Types;
+using todo.Repositories.SQLRepositories;
+using todo.Repositories.XMLRepositories;
+using todo.Repositories.Interfaces;
+using todo.GraphQL.Types;
 
-namespace To_Do_List__Project.GraphQL.Queries
+namespace todo.GraphQL.Queries
 {
     public class CategoryQuery : ObjectGraphType
     {
@@ -19,10 +19,10 @@ namespace To_Do_List__Project.GraphQL.Queries
                     var source = context.GetArgument<string>("source")?.ToLower();
                     var services = context.RequestServices;
 
-                    ICategoryService categoryService = source switch
+                    ICategoryRepository categoryService = source switch
                     {
-                        "xml" => services!.GetRequiredService<XMLCategoryRepository>(),
-                        _ => services!.GetRequiredService<SQLCategoryRepository>()
+                        "xml" => services!.GetRequiredService<Repositories.XMLRepositories.XmlCategoryRepository>(),
+                        _ => services!.GetRequiredService<Repositories.SQLRepositories.SqlCategoryRepository>()
                     };
 
                     return categoryService.GetCategories();

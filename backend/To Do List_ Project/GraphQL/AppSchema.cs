@@ -1,8 +1,8 @@
 ﻿using GraphQL.Types;
-using To_Do_List__Project.GraphQL.Mutations;
-using To_Do_List__Project.GraphQL.Queries;
+using todo.GraphQL.Mutations;
+using todo.GraphQL.Queries;
 
-namespace To_Do_List__Project.GraphQL
+namespace todo.GraphQL
 {
     public class AppSchema : Schema
     {

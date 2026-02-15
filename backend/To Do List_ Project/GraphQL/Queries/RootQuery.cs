@@ -1,6 +1,6 @@
 ﻿using GraphQL.Types;
 
-namespace To_Do_List__Project.GraphQL.Queries
+namespace todo.GraphQL.Queries
 {
     public class RootQuery : ObjectGraphType
     {
