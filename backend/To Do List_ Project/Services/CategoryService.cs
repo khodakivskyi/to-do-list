@@ -1,10 +1,11 @@
-﻿using todo.Factories.Interfaces;
+using todo.Exceptions;
+using todo.Factories.Interfaces;
 using todo.Models;
 using todo.Services.Interfaces;
 
 namespace todo.Services
 {
-    public class CategoryService: ICategoryService
+    public class CategoryService : ICategoryService
     {
         private readonly ICategoryRepositoryFactory _factory;
 
@@ -15,6 +16,12 @@ namespace todo.Services
 
         public async Task AddDefaultCategoriesAsync(List<string> defaultCategories)
         {
+            if (defaultCategories == null || defaultCategories.Count == 0)
+                throw new ValidationException("Default categories list cannot be empty.");
+
+            if (defaultCategories.Any(string.IsNullOrWhiteSpace))
+                throw new ValidationException("Category name cannot be empty.");
+
             var sqlRepository = _factory.Get("sql");
             var xmlRepository = _factory.Get("xml");
 

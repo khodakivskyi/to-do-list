@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>To_Do_List__Project</RootNamespace>
+    <RootNamespace>todo</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +14,10 @@
     <PackageReference Include="GraphQL.Server.Ui.GraphiQL" Version="7.5.0" />
     <PackageReference Include="GraphQL.SystemTextJson" Version="7.5.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 
 </Project>
