@@ -8,15 +8,15 @@
 <form asp-action="ChooseStorage" method="post" class="storage-form">
 	<label for="storage">Активне сховище:</label>
 	<select class="storage" name="storage" onchange="this.form.submit()">
-		@if ((ViewBag.SelectedStorage as string) == "sql")
+		@if ((ViewBag.SelectedStorage as int) == "sql")
 		{
-			<option value="sql" selected>SQL</option>
-			<option value="xnl">XML</option>
+			<option value="1" selected>SQL</option>
+			<option value="2">XML</option>
 		}
 		else
 		{
-			<option value="sql">SQL</option>
-			<option value="xnl" selected>XML</option>
+			<option value="1">SQL</option>
+			<option value="2" selected>XML</option>
 		}
 	</select>
 </form>

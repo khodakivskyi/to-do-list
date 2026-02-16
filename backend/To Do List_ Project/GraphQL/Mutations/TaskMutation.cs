@@ -1,33 +1,23 @@
 ﻿using GraphQL;
 using GraphQL.Types;
-using todo.Repositories.SQLRepositories;
-using todo.Repositories.XMLRepositories;
-using todo.Repositories.Interfaces;
 using todo.Models;
+using todo.Services.Interfaces;
 
 public class TaskMutation : ObjectGraphType
 {
-    public TaskMutation()
+    public TaskMutation(ITaskService taskService)
     {
         Field<TaskType>("addTask")
        .Argument<NonNullGraphType<StringGraphType>>("text")
        .Argument<DateTimeGraphType>("dueDate")
        .Argument<IntGraphType>("categoryId")
-       .Argument<StringGraphType>("source")
-       .Resolve(context =>
+       .Argument<IntGraphType>("storageTypeId")
+       .ResolveAsync(async context =>
        {
            var text = context.GetArgument<string>("text");
            var dueDate = context.GetArgument<DateTime?>("dueDate");
            var categoryId = context.GetArgument<int?>("categoryId");
-           var source = context.GetArgument<string>("source")?.ToLower();
-
-           var services = context.RequestServices;
-
-           ITaskRepository taskService = source switch
-           {
-               "xml" => services!.GetRequiredService<todo.Repositories.XMLRepositories.XmlTaskRepository>(),
-               _ => services!.GetRequiredService<todo.Repositories.SQLRepositories.SqlTaskRepository>()
-           };
+           var storageTypeId = context.GetArgument<int>("storageTypeId");
 
            var taskToAdd = new TaskModel
            {
@@ -38,58 +28,29 @@ public class TaskMutation : ObjectGraphType
                Created_At = DateTime.Now
            };
 
-           var createdTask = taskService.AddTaskAsync(taskToAdd);
-
-           return createdTask;
+           return await taskService.AddTaskAsync(taskToAdd, storageTypeId);
        });
 
         Field<BooleanGraphType>("clearTasks")
-            .Argument<StringGraphType>("source")
-            .Resolve(context =>
+            .Argument<IntGraphType>("storageTypeId")
+            .ResolveAsync(async context =>
             {
-                var source = context.GetArgument<string>("source")?.ToLower();
+                var storageTypeId = context.GetArgument<int>("storageTypeId");
 
-                var services = context.RequestServices;
+                await taskService.ClearTasksAsync(storageTypeId);
 
-                ITaskRepository taskService = source switch
-                {
-                    "xml" => services!.GetRequiredService<todo.Repositories.XMLRepositories.XmlTaskRepository>(),
-                    _ => services!.GetRequiredService<todo.Repositories.SQLRepositories.SqlTaskRepository>()
-                };
-
-                bool res = taskService.ClearTasksAsync();
-
-                return res;
+                return true;
             });
 
         Field<BooleanGraphType>("updateTask")
             .Argument<NonNullGraphType<IntGraphType>>("id")
-            .Argument<StringGraphType>("source")
-            .Resolve(context =>
+            .Argument<IntGraphType>("storageTypeId")
+            .ResolveAsync(async context =>
             {
                 var id = context.GetArgument<int>("id");
-                var source = context.GetArgument<string>("source")?.ToLower();
+                var storageTypeId = context.GetArgument<int>("storageTypeId");
 
-                var services = context.RequestServices;
-
-                ITaskRepository taskService = source switch
-                {
-                    "xml" => services!.GetRequiredService<todo.Repositories.XMLRepositories.XmlTaskRepository>(),
-                    _ => services!.GetRequiredService<todo.Repositories.SQLRepositories.SqlTaskRepository>()
-                };
-
-                var taskToUpdate = taskService.GetTaskByIdAsync(id);
-                if (taskToUpdate == null)
-                {
-                    return false;
-                }
-
-                taskToUpdate.Is_Completed = true;
-                taskToUpdate.Completed_At = DateTime.Now;
-
-                bool res = taskService.UpdateTask(taskToUpdate);
-
-                return res;
+                return await taskService.MarkTaskAsCompleteAsync(id, storageTypeId);
             });
     }
 }

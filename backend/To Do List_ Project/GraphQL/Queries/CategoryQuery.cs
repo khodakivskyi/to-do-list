@@ -1,31 +1,24 @@
 ﻿using GraphQL;
 using GraphQL.Types;
+using todo.GraphQL.Types;
+using todo.Repositories.Interfaces;
 using todo.Repositories.SQLRepositories;
 using todo.Repositories.XMLRepositories;
-using todo.Repositories.Interfaces;
-using todo.GraphQL.Types;
+using todo.Services.Interfaces;
 
 namespace todo.GraphQL.Queries
 {
     public class CategoryQuery : ObjectGraphType
     {
-        public CategoryQuery()
+        public CategoryQuery(ICategoryService categoryService)
         {
             Field<ListGraphType<CategoryType>>("categories")
-                .Description("Отримати всі категорії")
-                .Argument<StringGraphType>("source", "sql або xml")
-                .Resolve(context =>
+                .Argument<IntGraphType>("storageTypeId")
+                .ResolveAsync(async context =>
                 {
-                    var source = context.GetArgument<string>("source")?.ToLower();
-                    var services = context.RequestServices;
+                    var storageTypeId = context.GetArgument<int>("storageTypeId");
 
-                    ICategoryRepository categoryService = source switch
-                    {
-                        "xml" => services!.GetRequiredService<Repositories.XMLRepositories.XmlCategoryRepository>(),
-                        _ => services!.GetRequiredService<Repositories.SQLRepositories.SqlCategoryRepository>()
-                    };
-
-                    return categoryService.GetCategories();
+                    return await categoryService.GetCategoriesAsync(storageTypeId);
                 });
         }
     }
