@@ -4,6 +4,6 @@ namespace todo.Factories.Interfaces
 {
     public interface ITaskRepositoryFactory
     {
-        ITaskRepository Get(string type);
+        ITaskRepository Get(int storageTypeId);
     }
 }

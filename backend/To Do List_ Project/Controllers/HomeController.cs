@@ -18,8 +18,8 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var storageType = GetCurrentStorage();
-        await InitPage(storageType);
+        var storageTypeId = GetCurrentStorage();
+        await InitPage(storageTypeId);
 
         return View();
     }
@@ -27,8 +27,8 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> AddTask(TaskModel task)
     {
-        var storageType = GetCurrentStorage();
-        await _taskService.AddTaskAsync(task, storageType);
+        var storageTypeId = GetCurrentStorage();
+        await _taskService.AddTaskAsync(task, storageTypeId);
 
         return RedirectToAction("Index");
     }
@@ -36,8 +36,8 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> MarkTaskAsComplete(int id)
     {
-        var storageType = GetCurrentStorage();
-        await _taskService.MarkTaskAsCompleteAsync(id, storageType);
+        var storageTypeId = GetCurrentStorage();
+        await _taskService.MarkTaskAsCompleteAsync(id, storageTypeId);
 
         return RedirectToAction("Index");
     }
@@ -45,8 +45,8 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> ClearTasks()
     {
-        var storageType = GetCurrentStorage();
-        await _taskService.ClearTasksAsync(storageType);
+        var storageTypeId = GetCurrentStorage();
+        await _taskService.ClearTasksAsync(storageTypeId);
 
         return RedirectToAction("Index");
     }
@@ -66,16 +66,17 @@ public class HomeController : Controller
     }
 
 
-    private string GetCurrentStorage()
+    private int GetCurrentStorage()
     {
-        return HttpContext.Session.GetString("StorageType") ?? "sql";
+        var storageTypeStr = HttpContext.Session.GetString("StorageTypeId") ?? "1";
+        return int.Parse(storageTypeStr);
     }
 
-    private async Task InitPage(string storageType)
+    private async Task InitPage(int storageTypeId)
     {
-        ViewBag.SelectedStorage = storageType;
-        ViewBag.Categories = await _categoryService.GetCategoriesAsync(storageType);
-        ViewBag.ActiveTasks = await _taskService.GetTasksByCompletionStatusAsync(false, storageType);
-        ViewBag.CompletedTasks = await _taskService.GetTasksByCompletionStatusAsync(true, storageType);
+        ViewBag.SelectedStorage = storageTypeId;
+        ViewBag.Categories = await _categoryService.GetCategoriesAsync(storageTypeId);
+        ViewBag.ActiveTasks = await _taskService.GetTasksByCompletionStatusAsync(1, storageTypeId);
+        ViewBag.CompletedTasks = await _taskService.GetTasksByCompletionStatusAsync(2, storageTypeId);
     }
 }

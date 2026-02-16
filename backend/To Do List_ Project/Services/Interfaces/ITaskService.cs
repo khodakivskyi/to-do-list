@@ -4,11 +4,11 @@ namespace todo.Services.Interfaces
 {
     public interface ITaskService
     {
-        Task<TaskModel> GetTaskByIdAsync(int id, string storageType);
-        Task<TaskModel> AddTaskAsync(TaskModel task, string storageType);
-        Task<bool> MarkTaskAsCompleteAsync(int id, string storageType);
-        Task<IEnumerable<TaskModel>> GetAllTasksAsync(string storageType);
-        Task<IEnumerable<TaskModel>> GetTasksByCompletionStatusAsync(bool isCompleted, string storageType);
-        Task ClearTasksAsync(string storageType);
+        Task<TaskModel> GetTaskByIdAsync(int id, int storageTypeId);
+        Task<TaskModel> AddTaskAsync(TaskModel task, int storageTypeId);
+        Task<bool> MarkTaskAsCompleteAsync(int id, int storageTypeId);
+        Task<IEnumerable<TaskModel>> GetAllTasksAsync(int storageTypeId);
+        Task<IEnumerable<TaskModel>> GetTasksByCompletionStatusAsync(int statusTypeId, int storageTypeId);
+        Task ClearTasksAsync(int storageTypeId);
     }
 }

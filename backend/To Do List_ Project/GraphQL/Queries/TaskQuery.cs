@@ -1,57 +1,43 @@
-﻿using GraphQL.Types;
-using GraphQL;
-using todo.Repositories.Interfaces;
-using todo.Repositories.SQLRepositories;
-using todo.Repositories.XMLRepositories;
+﻿using GraphQL;
+using GraphQL.Types;
+using todo.Services.Interfaces;
 
 namespace todo.GraphQL.Queries
 {
     public class TaskQuery : ObjectGraphType
     {
-        public TaskQuery()
+        public TaskQuery(ITaskService taskService)
         {
-            Field<ListGraphType<TaskType>>("tasks")
-                .Argument<StringGraphType>("status", "active або completed або all")
-                .Argument<StringGraphType>("source", "sql або xml")
-                .Resolve(context =>
+            Field<ListGraphType<TaskType>>("tasksByCompletionStatus")
+                .Argument<IntGraphType>("statusTypeId")
+                .Argument<IntGraphType>("storageTypeId")
+                .ResolveAsync(async context =>
                 {
-                    var status = context.GetArgument<string>("status")?.ToLower();
-                    var source = context.GetArgument<string>("source")?.ToLower();
+                    var statusTypeId = context.GetArgument<int>("statusTypeId");
+                    var storageTypeId = context.GetArgument<int>("storageTypeId");
 
-                    var services = context.RequestServices;
-
-                    ITaskRepository taskService = source switch
-                    {
-                        "xml" => services!.GetRequiredService<Repositories.XMLRepositories.XmlTaskRepository>(),
-                        _ => services!.GetRequiredService<Repositories.SQLRepositories.SqlTaskRepository>()
-                    };
-
-                    return status switch
-                    {
-                        "active" => taskService.GetActiveTasksAsync(),
-                        "completed" => taskService.GetCompletedTasksAsync(),
-                        _ => taskService.GetAllTasksAsync()
-                    };
+                    return await taskService.GetTasksByCompletionStatusAsync(statusTypeId, storageTypeId);
                 });
+
+            Field<ListGraphType<TaskType>>("allTasks")
+               .Argument<IntGraphType>("storageTypeId")
+               .ResolveAsync(async context =>
+               {
+                   var storageTypeId = context.GetArgument<int>("storageTypeId");
+
+                   return await taskService.GetAllTasksAsync(storageTypeId);
+               });
 
             Field<TaskType>("task")
                 .Description("Отримати завдання за ID")
-                .Argument<NonNullGraphType<IntGraphType>>("id", "ID завдання")
-                .Argument<StringGraphType>("source", "sql або xml")
-                .Resolve(context =>
+                .Argument<NonNullGraphType<IntGraphType>>("id")
+               .Argument<IntGraphType>("storageTypeId")
+                .ResolveAsync(async context =>
                 {
                     var id = context.GetArgument<int>("id");
-                    var source = context.GetArgument<string>("source")?.ToLower();
+                    var storageTypeId = context.GetArgument<int>("storageTypeId");
 
-                    var services = context.RequestServices;
-
-                    ITaskRepository taskService = source switch
-                    {
-                        "xml" => services!.GetRequiredService<Repositories.XMLRepositories.XmlTaskRepository>(),
-                        _ => services!.GetRequiredService<Repositories.SQLRepositories.SqlTaskRepository>()
-                    };
-
-                    return taskService.GetTaskByIdAsync(id);
+                    return await taskService.GetTaskByIdAsync(id, storageTypeId);
                 });
         }
     }

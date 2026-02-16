@@ -1,7 +1,8 @@
+using todo.Enums;
 using todo.Exceptions;
-using todo.Repositories.SQLRepositories;
-using todo.Repositories.Interfaces;
 using todo.Factories.Interfaces;
+using todo.Repositories.Interfaces;
+using todo.Repositories.SQLRepositories;
 using todo.Repositories.XMLRepositories;
 
 namespace todo.Factories
@@ -15,13 +16,18 @@ namespace todo.Factories
             _serviceProvider = serviceProvider;
         }
 
-        public ITaskRepository Get(string type)
+        public ITaskRepository Get(int storageTypeId)
         {
-            return type switch
+            if (!Enum.IsDefined(typeof(StorageType), storageTypeId))
+                throw new ValidationException($"Unknown storage type id: '{storageTypeId}'. Supported values: 1 (sql), 2 (xml).");
+
+            var storageType = (StorageType)storageTypeId;
+
+            return storageType switch
             {
-                "sql" => _serviceProvider.GetRequiredService<SqlTaskRepository>(),
-                "xml" => _serviceProvider.GetRequiredService<XmlTaskRepository>(),
-                _ => throw new ValidationException($"Unknown storage type: '{type}'. Supported types: 'sql', 'xml'.")
+                StorageType.sql => _serviceProvider.GetRequiredService<SqlTaskRepository>(),
+                StorageType.xml => _serviceProvider.GetRequiredService<XmlTaskRepository>(),
+                _ => throw new OperationFailedException("Unsupported storage type.")
             };
         }
     }

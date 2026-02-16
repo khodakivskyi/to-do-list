@@ -4,6 +4,6 @@ namespace todo.Factories.Interfaces
 {
     public interface ICategoryRepositoryFactory
     {
-        ICategoryRepository Get(string type);
+        ICategoryRepository Get(int storageTypeId);
     }
 }

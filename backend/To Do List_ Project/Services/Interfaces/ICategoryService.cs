@@ -5,6 +5,6 @@ namespace todo.Services.Interfaces
     public interface ICategoryService
     {
         Task AddDefaultCategoriesAsync(List<string> defaultCategories);
-        Task<IEnumerable<Category>> GetCategoriesAsync(string storageType);
+        Task<IEnumerable<Category>> GetCategoriesAsync(int storageTypeId);
     }
 }

@@ -22,8 +22,8 @@ namespace todo.Services
             if (defaultCategories.Any(string.IsNullOrWhiteSpace))
                 throw new ValidationException("Category name cannot be empty.");
 
-            var sqlRepository = _factory.Get("sql");
-            var xmlRepository = _factory.Get("xml");
+            var sqlRepository = _factory.Get(1);
+            var xmlRepository = _factory.Get(2);
 
             var sqlTask = sqlRepository.AddDefaultCategoriesAsync(defaultCategories);
             var xmlTask = xmlRepository.AddDefaultCategoriesAsync(defaultCategories);
@@ -31,9 +31,9 @@ namespace todo.Services
             await Task.WhenAll(sqlTask, xmlTask);
         }
 
-        public async Task<IEnumerable<Category>> GetCategoriesAsync(string storageType)
+        public async Task<IEnumerable<Category>> GetCategoriesAsync(int storageTypeId)
         {
-            var repository = _factory.Get(storageType);
+            var repository = _factory.Get(storageTypeId);
             return await repository.GetCategoriesAsync();
         }
     }
