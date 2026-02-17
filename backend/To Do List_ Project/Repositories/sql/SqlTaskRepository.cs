@@ -23,7 +23,7 @@ namespace todo.Repositories.SQLRepositories
                 connection.Open();
                 var reader = await command.ExecuteReaderAsync();
 
-                if (reader.Read())
+                if (await reader.ReadAsync())
                 {
                     return new TaskModel
                     {
@@ -64,7 +64,7 @@ namespace todo.Repositories.SQLRepositories
                     {
                         if (await reader.ReadAsync())
                         {
-                            MapReaderToTaskModel(reader);
+                            return MapReaderToTaskModel(reader);
                         }
                     }
                 }
@@ -74,6 +74,7 @@ namespace todo.Repositories.SQLRepositories
 
         public async Task<bool> MarkTaskAsCompleteAsync(TaskModel task)
         {
+            Console.WriteLine($"Marking task with ID {task.Id} as complete. Is_Completed: {task.Is_Completed}, Completed_At: {task.Completed_At}");
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -104,7 +105,7 @@ namespace todo.Repositories.SQLRepositories
                 connection.Open();
                 var reader = await command.ExecuteReaderAsync();
 
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     tasks.Add(new TaskModel
                     {
@@ -130,11 +131,12 @@ namespace todo.Repositories.SQLRepositories
             {
                 string query = "SELECT * FROM Tasks WHERE Is_Completed = @Is_Completed";
                 var command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@Is_Completed", isCompleted);
-                connection.Open();
+                command.Parameters.AddWithValue("@Is_Completed", isCompleted ? 1 : 0); 
+
+                await connection.OpenAsync();
                 var reader = await command.ExecuteReaderAsync();
 
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     var task = new TaskModel
                     {
@@ -142,14 +144,10 @@ namespace todo.Repositories.SQLRepositories
                         Text = reader["Text"].ToString()!,
                         Due_Date = reader["Due_Date"] == DBNull.Value ? null : (DateTime)reader["Due_Date"],
                         Category_Id = reader["Category_Id"] == DBNull.Value ? null : Convert.ToInt32(reader["Category_Id"]),
-                        Is_Completed = isCompleted,
-                        Created_At = (DateTime)reader["Created_At"]
+                        Is_Completed = (bool)reader["Is_Completed"],
+                        Created_At = (DateTime)reader["Created_At"],
+                        Completed_At = reader["Completed_At"] == DBNull.Value ? null : (DateTime)reader["Completed_At"]
                     };
-
-                    if (isCompleted)
-                    {
-                        task.Completed_At = reader["Completed_At"] == DBNull.Value ? null : (DateTime)reader["Completed_At"];
-                    }
 
                     tasks.Add(task);
                 }
