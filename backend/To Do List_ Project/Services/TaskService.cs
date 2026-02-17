@@ -2,8 +2,6 @@ using todo.Enums;
 using todo.Exceptions;
 using todo.Factories.Interfaces;
 using todo.Models;
-using todo.Repositories.SQLRepositories;
-using todo.Repositories.XMLRepositories;
 using todo.Services.Interfaces;
 
 namespace todo.Services
@@ -91,12 +89,14 @@ namespace todo.Services
 
             var statusType = (StatusType)statusTypeId;
 
-            return statusType switch
+            IEnumerable<TaskModel> tasks = statusType switch
             {
                 StatusType.active => await repository.GetTasksByCompletionStatusAsync(false),
                 StatusType.completed => await repository.GetTasksByCompletionStatusAsync(true),
                 _ => throw new OperationFailedException("Unsupported status type.")
             };
+
+            return tasks;
         }
     }
 }

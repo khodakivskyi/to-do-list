@@ -1,6 +1,8 @@
 using dotenv.net;
 using GraphQL;
 using GraphQL.Types;
+using todo.Factories;
+using todo.Factories.Interfaces;
 using todo.GraphQL;
 using todo.GraphQL.Mutations;
 using todo.GraphQL.Queries;
@@ -9,6 +11,7 @@ using todo.Middlewares;
 using todo.Models;
 using todo.Repositories.SQLRepositories;
 using todo.Repositories.XMLRepositories;
+using todo.Services;
 using todo.Services.Interfaces;
 
 namespace todo
@@ -41,13 +44,20 @@ namespace todo
             builder.Services.AddScoped(sp => new XmlTaskRepository(Path.Combine(xmlFolderPath, "tasks.xml")));
             builder.Services.AddScoped(sp => new XmlCategoryRepository(Path.Combine(xmlFolderPath, "categories.xml")));
 
+            // Configure factories
+            builder.Services.AddScoped<ITaskRepositoryFactory, TaskRepositoryFactory>();
+            builder.Services.AddScoped<ICategoryRepositoryFactory, CategoryRepositoryFactory>();
+
+            // Configure services
+            builder.Services.AddScoped<ITaskService, TaskService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
             // GraphQL
-            builder.Services.AddSingleton<TaskType>();
-            builder.Services.AddSingleton<CategoryType>();
-            builder.Services.AddSingleton<RootQuery>();
-            builder.Services.AddSingleton<RootMutation>();
-            builder.Services.AddSingleton<ISchema, AppSchema>();
+            builder.Services.AddScoped<TaskType>();
+            builder.Services.AddScoped<CategoryType>();
+            builder.Services.AddScoped<RootQuery>();
+            builder.Services.AddScoped<RootMutation>();
+            builder.Services.AddScoped<ISchema, AppSchema>();
             builder.Services.AddGraphQL(builder =>
             {
                 builder.AddSystemTextJson();
