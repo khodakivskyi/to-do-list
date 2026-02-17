@@ -34,9 +34,10 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> MarkTaskAsComplete(int id)
+    public async Task<IActionResult> MarkTaskAsComplete(string taskIdStr)
     {
         var storageTypeId = GetCurrentStorage();
+        var id = int.TryParse(taskIdStr, out int parsedId) ? parsedId : 0;
         await _taskService.MarkTaskAsCompleteAsync(id, storageTypeId);
 
         return RedirectToAction("Index");
@@ -54,7 +55,9 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult ChooseStorage(string storage)
     {
-        HttpContext.Session.SetString("StorageType", storage);
+        if (!int.TryParse(storage, out int StorageTypeId)) StorageTypeId = 1;
+
+        HttpContext.Session.SetInt32("StorageTypeId", StorageTypeId);
 
         return RedirectToAction("Index");
     }
@@ -68,15 +71,17 @@ public class HomeController : Controller
 
     private int GetCurrentStorage()
     {
-        var storageTypeStr = HttpContext.Session.GetString("StorageTypeId") ?? "1";
-        return int.Parse(storageTypeStr);
+        return HttpContext.Session.GetInt32("StorageTypeId") ?? 1;
     }
 
     private async Task InitPage(int storageTypeId)
     {
-        ViewBag.SelectedStorage = storageTypeId;
+        ViewBag.SelectedStorageId = storageTypeId;
         ViewBag.Categories = await _categoryService.GetCategoriesAsync(storageTypeId);
         ViewBag.ActiveTasks = await _taskService.GetTasksByCompletionStatusAsync(1, storageTypeId);
-        ViewBag.CompletedTasks = await _taskService.GetTasksByCompletionStatusAsync(2, storageTypeId);
+        var completed = await _taskService.GetTasksByCompletionStatusAsync(2, storageTypeId);
+        Console.WriteLine($"Completed tasks count: {completed.Count()}");
+        ViewBag.CompletedTasks = completed;
+
     }
 }

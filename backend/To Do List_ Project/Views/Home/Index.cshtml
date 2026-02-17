@@ -3,12 +3,13 @@
 	var activeTasks = ViewBag.activeTasks as IEnumerable<TaskModel>;
 	var completedTasks = ViewBag.completedTasks as IEnumerable<TaskModel>;
 	var categories = ViewBag.Categories as IEnumerable<Category>;
+	var selectedStorageId = (int)ViewBag.SelectedStorageId;
 }
 
 <form asp-action="ChooseStorage" method="post" class="storage-form">
 	<label for="storage">Активне сховище:</label>
 	<select class="storage" name="storage" onchange="this.form.submit()">
-		@if ((ViewBag.SelectedStorage as int) == "sql")
+		@if (selectedStorageId == 1)
 		{
 			<option value="1" selected>SQL</option>
 			<option value="2">XML</option>
@@ -62,7 +63,7 @@
 						<td>@task.Created_At.ToString("yyyy-MM-dd")</td>
 						<td>
 							<form asp-action="MarkTaskAsComplete" method="post">
-								<input type="hidden" name="taskId" value="@task.Id" />
+								<input type="hidden" name="taskIdStr" value="@task.Id" />
 								<input type="checkbox"
 									   onchange="this.form.submit()"
 									   @(task.Is_Completed == true ? "checked" : "") />
