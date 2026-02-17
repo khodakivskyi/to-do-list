@@ -9,11 +9,9 @@ namespace todo.GraphQL.Types
         {
             Name = "Category";
 
-            Field<IntGraphType>("id")
-                .Resolve(ctx => ctx.Source.Category_Id);
+            Field<IntGraphType>("id").Resolve(ctx => ctx.Source.Category_Id);
 
-            Field<StringGraphType>("categoryName")
-                .Resolve(ctx => ctx.Source.Category_Name);
+            Field<StringGraphType>("categoryName").Resolve(ctx => ctx.Source.Category_Name);
         }
     }
 }

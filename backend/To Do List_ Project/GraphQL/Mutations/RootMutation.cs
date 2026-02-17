@@ -4,13 +4,18 @@ namespace todo.GraphQL.Mutations
 {
     public class RootMutation : ObjectGraphType
     {
-        public RootMutation()
+        public RootMutation(TaskMutation taskMutation)
         {
-            var taskMutation = new TaskMutation();
+            Name = "Mutation";
 
-            foreach (var field in taskMutation.Fields)
+            var mutations = new ObjectGraphType[] { taskMutation };
+
+            foreach (var mutation in mutations)
             {
-                AddField(field);
+                foreach (var field in mutation.Fields)
+                {
+                    AddField(field);
+                }
             }
         }
     }

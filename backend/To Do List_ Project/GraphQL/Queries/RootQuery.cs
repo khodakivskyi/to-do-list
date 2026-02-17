@@ -8,11 +8,15 @@ namespace todo.GraphQL.Queries
         {
             Name = "Query";
 
-            foreach (var field in taskQuery.Fields)
-                AddField(field);
+            var queries = new ObjectGraphType[] { taskQuery, categoryQuery };
 
-            foreach (var field in categoryQuery.Fields)
-                AddField(field);
+            foreach (var query in queries)
+            {
+                foreach (var field in query.Fields)
+                {
+                    AddField(field);
+                }
+            }
         }
     }
 }
